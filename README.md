@@ -2,6 +2,8 @@
 
 A placeholder portfolio and personal UI resource library built with React, TypeScript and Vite.
 
+Live site: https://personal-portfolio-library.vercel.app
+
 ## Run locally
 
 ```sh
