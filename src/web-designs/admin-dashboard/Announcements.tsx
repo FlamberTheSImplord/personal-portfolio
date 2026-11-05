@@ -16,7 +16,7 @@ function Composer({ onCancel, onCreate }: { onCancel: () => void; onCreate: (a: 
       <input autoFocus aria-label="Announcement title" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
       <textarea aria-label="Announcement message" placeholder="Write a short message for the team…" rows={2} value={body} onChange={e => setBody(e.target.value)} />
       <div className="ad-composer-foot">
-        <Segmented id="ad-audience" value={audience} onChange={setAudience} options={(['Everyone', 'Agents', 'Managers'] as Audience[]).map(a => ({ id: a, label: a }))} />
+        <Segmented value={audience} onChange={setAudience} options={(['Everyone', 'Agents', 'Managers'] as Audience[]).map(a => ({ id: a, label: a }))} />
         <span className="ad-composer-note">Demo only. Nothing is sent to Telegram.</span>
         <button type="button" className="ad-btn" onClick={onCancel}>Cancel</button>
         <button type="button" className="ad-btn" disabled={!title.trim()} onClick={() => create('scheduled')}><CalendarClock size={13} />Schedule for tomorrow</button>
@@ -50,7 +50,7 @@ export default function Announcements({ items, setItems, notify }: { items: Anno
       <Rise><h1>Announcements</h1><p>Message the team in the app and on Telegram</p></Rise>
       <Rise i={1} className="ad-actions"><button className="ad-btn dark" aria-expanded={composing} onClick={() => setComposing(!composing)}>{composing ? <X size={13} /> : <Plus size={13} />}{composing ? 'Close' : 'New announcement'}</button></Rise>
     </header>
-    <Rise i={2}><Segmented id="ad-ann-tab" className="ad-wide-tabs" value={tab} onChange={setTab} options={tabs} /></Rise>
+    <Rise i={2}><Segmented className="ad-wide-tabs" value={tab} onChange={setTab} options={tabs} /></Rise>
     <AnimatePresence>{composing && <Composer onCancel={() => setComposing(false)} onCreate={a => {
       const id = `a${Date.now()}`
       setItems(list => [{ ...a, id, date: a.status === 'sent' ? 'Just now' : 'Tomorrow, 9:00 AM', read: 0, total: audienceSize[a.audience], pinned: false }, ...list])
@@ -58,8 +58,8 @@ export default function Announcements({ items, setItems, notify }: { items: Anno
       setComposing(false); setTab('all'); notify(a.status === 'sent' ? 'Announcement sent to the team (demo).' : 'Announcement scheduled for tomorrow, 9:00 AM (demo).')
     }} />}</AnimatePresence>
     <div className="ad-ann-list">
-      <AnimatePresence mode="popLayout">
-        {shown.map((a, i) => <Glass key={a.id} i={3 + i} layout className="ad-ann" exit={{ opacity: 0, x: -30, filter: 'blur(8px)', transition: { duration: .3 } }}>
+      <AnimatePresence>
+        {shown.map((a, i) => <Glass key={a.id} i={3 + i} className="ad-ann" exit={{ opacity: 0, x: -30, filter: 'blur(8px)', transition: { duration: .3 } }}>
           <div className="ad-ann-top"><h3>{a.pinned && <MapPin size={13} className="ad-pin" />}{a.title}</h3><em className={`ad-pill ${a.status}`}><i />{a.status}</em></div>
           <p>{a.body}</p>
           <div className="ad-ann-foot">

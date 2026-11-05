@@ -26,7 +26,7 @@ export default function Overview({ liveGreeting, inReview, overdue, notify }: { 
     <div className="ad-overview-top">
       <Glass i={0} hover={false} className="ad-chart-card">
         <div className="ad-card-head"><div><h3>Agency commission</h3><p>${sum.toLocaleString('en-US')} from {deals} deals in the last {periods[period]} months{office && ` · ${office}`}</p></div>
-          <div className="ad-card-tools"><Segmented id="ad-period" value={period} onChange={setPeriod} options={(Object.keys(periods) as Period[]).map(p => ({ id: p, label: p }))} /><button className="ad-btn dark" onClick={() => notify('Deal form is outside this study. Nothing was recorded.')}><Plus size={13} />Record a deal</button></div></div>
+          <div className="ad-card-tools"><Segmented value={period} onChange={setPeriod} options={(Object.keys(periods) as Period[]).map(p => ({ id: p, label: p }))} /><button className="ad-btn dark" onClick={() => notify('Deal form is outside this study. Nothing was recorded.')}><Plus size={13} />Record a deal</button></div></div>
         <BarChart data={data} />
       </Glass>
       <Glass i={1} hover={false} className="ad-office-card">

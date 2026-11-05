@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties } from 'react'
 import { AnimatePresence, MotionConfig, motion } from 'motion/react'
 import { ArrowUpRight, BarChart3, Bell, Briefcase, Building2, Check, CircleDollarSign, Clock, FileText, Headphones, Home, Infinity as InfinityIcon, Megaphone, Palette, Plug, Search, Server, ShieldCheck, SlidersHorizontal, Sparkles, Users, type LucideIcon } from 'lucide-react'
 import './admin-dashboard.css'
@@ -20,24 +20,28 @@ function Sidebar({ screen, go, badges }: { screen: Screen; go: (s: Screen) => vo
     ['Business', [{ name: 'Moderation', icon: Building2, screen: 'moderation', badge: badges.moderation }, { name: 'Finance', icon: CircleDollarSign, screen: 'finance', badge: badges.finance }, { name: 'Billing', icon: FileText }]],
     ['System', [{ name: 'Activity log', icon: Clock }, { name: 'Integrations', icon: Plug }, { name: 'System', icon: Server }, { name: 'Settings', icon: SlidersHorizontal }]],
   ]
-  return <motion.aside className="ad-sidebar" initial={{ opacity: 0, x: -14, filter: 'blur(10px)' }} animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }} transition={{ duration: .7, ease }}>
+  // The highlight is placed from offsetTop (unscaled canvas pixels), so it lines up at any canvas scale.
+  const nav = useRef<HTMLElement>(null)
+  const [pill, setPill] = useState<{ y: number; height: number } | null>(null)
+  useLayoutEffect(() => { const item = nav.current?.querySelector<HTMLElement>('[aria-current="page"]'); if (item) setPill({ y: item.offsetTop, height: item.offsetHeight }) }, [screen])
+  return <aside className="ad-sidebar">
     <div className="ad-brand"><span><InfinityIcon size={17} /></span><div><b>Code XR Admin</b><small>Control center</small></div></div>
-    <nav aria-label="Admin navigation">{groups.map(([label, items]) => <div key={label} className="ad-nav-group"><span className="ad-nav-label">{label}</span>
+    <nav ref={nav} aria-label="Admin navigation">{pill && <motion.span className="ad-nav-active" aria-hidden="true" initial={false} animate={pill} transition={{ type: 'spring', stiffness: 380, damping: 34 }} />}{groups.map(([label, items]) => <div key={label} className="ad-nav-group"><span className="ad-nav-label">{label}</span>
       {items.map(({ name, icon: Icon, screen: target, badge }) => {
-        const content = <>{target === screen && <motion.span className="ad-nav-active" layoutId="ad-nav-active" transition={{ type: 'spring', stiffness: 380, damping: 34 }} />}<Icon size={14} /><span>{name}</span>{!!badge && <i>{badge}</i>}</>
+        const content = <><Icon size={14} /><span>{name}</span>{!!badge && <i>{badge}</i>}</>
         return target ? <button key={name} className="ad-nav-item" aria-current={target === screen ? 'page' : undefined} onClick={() => go(target)}>{content}</button>
           : <span key={name} className="ad-nav-item inert" title="Not shown in the reference">{content}</span>
       })}</div>)}</nav>
     <div className="ad-plan"><div><b>Business plan</b><small>13 of 20 seats</small></div><span><motion.i initial={{ width: 0 }} animate={{ width: '65%' }} transition={{ duration: 1.1, delay: .5, ease }} /></span></div>
-  </motion.aside>
+  </aside>
 }
 
 function Topbar() {
-  return <motion.header className="ad-topbar" initial={{ opacity: 0, y: -10, filter: 'blur(10px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .7, delay: .1, ease }}>
+  return <header className="ad-topbar">
     <label className="ad-search"><Search size={14} /><span className="ad-sr-only">Search</span><input placeholder="Search people, clients, listings, requests..." /><kbd>⌘K</kbd></label>
     <div className="ad-top-tools"><button className="ad-round dark" aria-label="Theme colours"><Palette size={14} /></button><button className="ad-round rainbow" aria-label="Assistant"><Sparkles size={14} /></button>
       <button className="ad-round light" aria-label="Notifications"><Bell size={14} /><i /></button><span className="ad-user"><span className="ad-avatar big">AM</span><span><b>Andriy Melnyk</b><small>Owner</small></span></span></div>
-  </motion.header>
+  </header>
 }
 
 type Toast = { id: number; message: string; undo?: () => void }
@@ -56,7 +60,7 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
     <div className="ad-backdrop" aria-hidden="true"><i /><i /><i /></div>
     <Sidebar screen={screen} go={go} badges={{ moderation: inReview, finance: overdue }} />
     <Topbar />
-    <motion.main className="ad-panel" ref={panel} initial={{ opacity: 0, scale: .985, filter: 'blur(12px)' }} animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }} transition={{ duration: .8, delay: .15, ease }}>
+    <main className="ad-panel" ref={panel}>
       <AnimatePresence mode="wait">
         <motion.div key={screen} className="ad-screen" exit={{ opacity: 0, y: -6, filter: 'blur(12px)', transition: { duration: .28, ease } }}>
           {screen === 'overview' ? <Overview liveGreeting={liveGreeting} inReview={inReview} overdue={overdue} notify={notify} />
@@ -65,7 +69,7 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
                 : <Announcements items={announcementState} setItems={setAnnouncements} notify={notify} />}
         </motion.div>
       </AnimatePresence>
-    </motion.main>
+    </main>
     <div className="ad-toast-region" role="status" aria-live="polite">
       <AnimatePresence>{toast && <motion.div key={toast.id} className="ad-toast" initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: 10 }} transition={{ duration: .3, ease }}>
         {toast.message}{toast.undo && <button onClick={() => { toast.undo?.(); setToast(null) }}>Undo</button>}</motion.div>}</AnimatePresence>

@@ -64,12 +64,12 @@ export default function Moderation({ listings, setListings, notify }: { listings
     </header>
     <Rise i={2} className="ad-filters">
       <label className="ad-field"><Search size={13} /><span className="ad-sr-only">Search listings</span><input placeholder="Code, title or address..." value={query} onChange={e => setQuery(e.target.value)} /></label>
-      <Segmented id="ad-mod-status" value={status} onChange={setStatus} options={(['review', 'approved', 'rejected'] as Status[]).map(s => ({ id: s, label: statusName[s], count: count(s) }))} />
-      <Segmented id="ad-mod-type" value={type} onChange={setType} options={[{ id: 'All', label: 'All' }, { id: 'Sale', label: 'Sale' }, { id: 'Rent', label: 'Rent' }]} />
+      <Segmented value={status} onChange={setStatus} options={(['review', 'approved', 'rejected'] as Status[]).map(s => ({ id: s, label: statusName[s], count: count(s) }))} />
+      <Segmented value={type} onChange={setType} options={[{ id: 'All', label: 'All' }, { id: 'Sale', label: 'Sale' }, { id: 'Rent', label: 'Rent' }]} />
     </Rise>
     <div className="ad-listing-grid">
-      <AnimatePresence mode="popLayout">
-        {shown.map((l, i) => <Glass key={l.id} i={3 + i} layout className="ad-listing" exit={{ opacity: 0, scale: .9, filter: 'blur(8px)', transition: { duration: .3 } }}>
+      <AnimatePresence>
+        {shown.map((l, i) => <Glass key={l.id} i={3 + i} className="ad-listing" exit={{ opacity: 0, scale: .9, filter: 'blur(8px)', transition: { duration: .3 } }}>
           <div className="ad-listing-art"><SceneArt scene={l.scene} title={l.title} />
             <span className={`ad-chip-dark status-${l.status}`}><i />{statusName[l.status]}</span><span className="ad-chip-dark ad-photos"><Image size={10} />{l.photos}</span><span className="ad-chip-dark ad-type">{l.type}</span></div>
           <div className="ad-listing-body">

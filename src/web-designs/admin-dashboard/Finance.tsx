@@ -43,11 +43,11 @@ export default function Finance({ payouts, setPayouts, notify }: { payouts: Payo
     </div>
     <Glass i={6} hover={false} className="ad-payouts">
       <div className="ad-card-head"><div><h3>Agent payouts</h3><p>The agent’s share of each closed deal</p></div>
-        <Segmented id="ad-payout-tab" value={tab} onChange={setTab} options={[{ id: 'due', label: 'Due', count: unpaid.length }, { id: 'overdue', label: 'Overdue', count: overdue }, { id: 'paid', label: 'Paid', count: paid.length }, { id: 'all', label: 'All' }]} /></div>
+        <Segmented value={tab} onChange={setTab} options={[{ id: 'due', label: 'Due', count: unpaid.length }, { id: 'overdue', label: 'Overdue', count: overdue }, { id: 'paid', label: 'Paid', count: paid.length }, { id: 'all', label: 'All' }]} /></div>
       <div className="ad-table" role="table" aria-label="Agent payouts">
         <div className="ad-row ad-row-head" role="row"><span>Agent</span><span>Property</span><span>Commission</span><span>To pay</span><span>Status</span><span /></div>
-        <AnimatePresence initial={false} mode="popLayout">
-          {rows.map(r => <motion.div layout key={r.id} className="ad-row" role="row" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 24, filter: 'blur(6px)' }} transition={{ duration: .35, ease }}>
+        <AnimatePresence initial={false}>
+          {rows.map(r => <motion.div key={r.id} className="ad-row" role="row" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, x: 24, filter: 'blur(6px)' }} transition={{ duration: .35, ease }}>
             <span className="ad-person"><Avatar initials={r.initials} size={30} /><span><b>{r.agent}</b><small>{r.ref}</small></span></span>
             <span><b>{r.property}</b><small>{r.client}</small></span>
             <span className="num"><b>${r.commission.toLocaleString('en-US')}</b><small>{r.share}% to agent</small></span>

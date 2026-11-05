@@ -1,4 +1,4 @@
-import { createContext, useEffect, useRef, useState, type ReactNode } from 'react'
+import { createContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, useReducedMotion, type HTMLMotionProps } from 'motion/react'
 import type { LucideIcon } from 'lucide-react'
 import { TrendingDown, TrendingUp } from 'lucide-react'
@@ -65,9 +65,23 @@ export function Rise({ i = 0, className = '', children }: { i?: number; classNam
 }
 
 export type Option<T extends string> = { id: T; label: string; count?: number }
-export function Segmented<T extends string>({ options, value, onChange, id, className = '' }: { options: Option<T>[]; value: T; onChange: (value: T) => void; id: string; className?: string }) {
-  return <div className={`ad-segmented ${className}`} role="tablist">{options.map(o => <button key={o.id} role="tab" aria-selected={value === o.id} onClick={() => onChange(o.id)}>
-    {value === o.id && <motion.span className="ad-segmented-pill" layoutId={id} transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
+// The active pill is placed from offsetLeft/offsetWidth rather than a layout animation:
+// layout animations measure on-screen pixels, which are wrong inside the scaled canvas.
+export function Segmented<T extends string>({ options, value, onChange, className = '' }: { options: Option<T>[]; value: T; onChange: (value: T) => void; className?: string }) {
+  const box = useRef<HTMLDivElement>(null)
+  const [pill, setPill] = useState<{ x: number; width: number } | null>(null)
+  useLayoutEffect(() => {
+    const el = box.current
+    if (!el) return
+    const measure = () => { const tab = el.querySelector<HTMLElement>('[aria-selected="true"]'); if (tab) setPill({ x: tab.offsetLeft, width: tab.offsetWidth }) }
+    measure()
+    const observer = new ResizeObserver(measure)
+    el.querySelectorAll('button').forEach(button => observer.observe(button))
+    return () => observer.disconnect()
+  }, [value, options.length])
+  return <div ref={box} className={`ad-segmented ${className}`} role="tablist">
+    {pill && <motion.span className="ad-segmented-pill" aria-hidden="true" initial={false} animate={pill} transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
+    {options.map(o => <button key={o.id} role="tab" aria-selected={value === o.id} onClick={() => onChange(o.id)}>
     <span className="ad-segmented-label">{o.label}{o.count !== undefined && <i><Count value={o.count} /></i>}</span>
   </button>)}</div>
 }
@@ -91,7 +105,7 @@ export function BarChart({ data, max = 60000, delay = .3, labelLatest = true }: 
   return <div className="ad-bars" onMouseLeave={() => setHover(null)}>
     <div className="ad-axis" aria-hidden="true">{axis.map(a => <span key={a}>{a}</span>)}</div>
     <div className="ad-plot" role="img" aria-label={data.map(d => `${d.label} ${format(d.value, 'usd')}`).join(', ')}>
-      {data.map((d, i) => <motion.div layout="position" key={d.label} className={`ad-bar-col ${i === data.length - 1 ? 'latest' : ''} ${i === shown ? 'shown' : ''}`} onMouseEnter={() => setHover(i)}>
+      {data.map((d, i) => <motion.div key={d.label} className={`ad-bar-col ${i === data.length - 1 ? 'latest' : ''} ${i === shown ? 'shown' : ''}`} onMouseEnter={() => setHover(i)}>
         <div className="ad-bar-track">
           <motion.div className="ad-bar" initial={{ height: 0 }} animate={{ height: `${d.value / max * 100}%` }} transition={{ duration: .9, delay: delay + i * .07, ease }}>
             {i === shown && <motion.span className="ad-bar-label" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: hover === null ? delay + data.length * .07 + .5 : 0 }}>

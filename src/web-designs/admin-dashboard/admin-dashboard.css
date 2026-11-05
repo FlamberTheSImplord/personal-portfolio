@@ -24,6 +24,13 @@
 .ad-backdrop i:nth-child(2){width:640px;height:520px;right:-160px;top:180px;background:#1e5fb0;opacity:.55;animation-delay:-6s}
 .ad-backdrop i:nth-child(3){width:700px;height:420px;right:120px;bottom:-240px;background:#1fa5a8;opacity:.6;animation-delay:-12s}
 @keyframes ad-drift{to{transform:translate(40px,30px) scale(1.08)}}
+/* Shell entrance runs as CSS so it always completes, whatever happens to JS animation frames. */
+.ad-sidebar{animation:ad-in-side .7s cubic-bezier(.22,1,.36,1) both}
+.ad-topbar{animation:ad-in-top .7s .1s cubic-bezier(.22,1,.36,1) both}
+.ad-panel{animation:ad-in-panel .8s .15s cubic-bezier(.22,1,.36,1) both}
+@keyframes ad-in-side{from{opacity:0;transform:translateX(-14px);filter:blur(10px)}}
+@keyframes ad-in-top{from{opacity:0;transform:translateY(-10px);filter:blur(10px)}}
+@keyframes ad-in-panel{from{opacity:0;transform:scale(.985);filter:blur(12px)}}
 
 /* Sidebar */
 .ad-sidebar{position:absolute;left:44px;top:20px;width:197px;height:755px;border-radius:22px;padding:8px 8px 8px;display:flex;flex-direction:column;color:#fff;
@@ -31,15 +38,15 @@
 .ad-brand{display:flex;align-items:center;gap:10px;padding:0 0 12px 1px}
 .ad-brand>span{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
 .ad-brand b{display:block;font-size:12.5px;font-weight:700;letter-spacing:-.1px}.ad-brand small{display:block;font-size:8.5px;opacity:.6;margin-top:1px}
-.ad-sidebar nav{display:block;margin:0;overflow:visible}
+.ad-sidebar nav{display:block;position:relative;margin:0;overflow:visible}
 .ad-nav-group{display:flex;flex-direction:column;margin-top:2px}
 .ad-nav-label{font-size:7.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;opacity:.62;padding:8px 9px 5px}
 .ad-nav-item{position:relative;display:flex;align-items:center;gap:10px;height:29px;margin-bottom:2px;padding:0 9px 0 8px;border:0;border-radius:10px;background:none;color:rgba(255,255,255,.92);font-size:10.5px;font-weight:500;text-align:left;transition:background .2s}
-.ad-nav-item>*{position:relative}.ad-nav-item>span:not(.ad-nav-active){flex:1}
+.ad-nav-item>span{flex:1}
 .ad-nav-item:hover{background:rgba(255,255,255,.13)}
 .ad-nav-item.inert{cursor:default}
 .ad-nav-item i{font-style:normal;font-size:8px;font-weight:600;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.28)}
-.ad-nav-active{position:absolute!important;inset:0;border-radius:10px;background:linear-gradient(180deg,#22b0e8,#0897cf);border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 16px rgba(8,140,205,.45)}
+.ad-nav-active{position:absolute;top:0;left:0;right:0;border-radius:10px;background:linear-gradient(180deg,#22b0e8,#0897cf);border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1px 0 rgba(255,255,255,.45),0 6px 16px rgba(8,140,205,.45)}
 .ad-nav-item:focus-visible,.ad-canvas button:focus-visible{outline:2px solid #fff;outline-offset:2px}
 .ad-plan{margin-top:auto;padding:11px 10px;border-radius:13px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18)}
 .ad-plan div{display:flex;justify-content:space-between;align-items:center;font-size:8.5px}.ad-plan b{font-weight:600}.ad-plan small{opacity:.7}
@@ -91,9 +98,9 @@
 .ad-card-head p{font-size:9px;color:var(--ad-muted);margin-top:4px}
 .ad-card-tools{display:flex;gap:8px;align-items:center}
 
-.ad-segmented{display:flex;padding:3px;border-radius:19px;background:rgba(214,228,238,.55);border:1px solid rgba(255,255,255,.5)}
+.ad-segmented{position:relative;display:flex;padding:3px;border-radius:19px;background:rgba(214,228,238,.55);border:1px solid rgba(255,255,255,.5)}
 .ad-segmented button{position:relative;flex:1;border:0;background:none;height:28px;padding:0 14px;border-radius:15px;font-size:9.5px;color:#5b6876;white-space:nowrap}
-.ad-segmented-pill{position:absolute;inset:0;border-radius:15px;background:#1f2228;box-shadow:0 4px 10px rgba(10,20,35,.25)}
+.ad-segmented-pill{position:absolute;top:3px;bottom:3px;left:0;border-radius:15px;background:#1f2228;box-shadow:0 4px 10px rgba(10,20,35,.25)}
 .ad-segmented-label{position:relative;display:inline-flex;align-items:center;gap:6px;transition:color .2s}
 .ad-segmented button[aria-selected=true] .ad-segmented-label{color:#fff}
 .ad-segmented-label i{font-style:normal;font-size:7.5px;font-weight:600;min-width:15px;height:15px;border-radius:8px;display:grid;place-items:center;background:rgba(255,255,255,.85);color:#3a4652}
@@ -231,4 +238,4 @@
 .ad-count{font-variant-numeric:tabular-nums}
 
 @media(max-width:580px){.ad-toolbar{align-items:flex-start}.ad-toolbar-tabs{flex-wrap:wrap}.ad-toolbar-tabs button{padding:6px 9px;font-size:10px}.ad-stage{border-radius:8px}}
-@media(prefers-reduced-motion:reduce){.ad-backdrop i{animation:none}.ad-glass::after{display:none}.ad-switch>span i{transition:none}}
+@media(prefers-reduced-motion:reduce){.ad-backdrop i,.ad-sidebar,.ad-topbar,.ad-panel{animation:none}.ad-glass::after{display:none}.ad-switch>span i{transition:none}}
