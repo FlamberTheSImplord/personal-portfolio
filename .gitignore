@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.vercel/
+.env*
+
+# local-only notes and reference material
+HANDOVER.md
+*_PROMPT.md
+docs/palette-comparison/
+.claude/
