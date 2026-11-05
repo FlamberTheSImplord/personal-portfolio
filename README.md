@@ -77,3 +77,11 @@ Full sites open at `?showcase=vengeance#ui-library`, `?showcase=animate#ui-libra
 Source revisions, adaptations and licence notices are in `src/ui-library/SOURCES.md` and `src/ui-library/vendor/`. Forge restricts source redistribution, so its adapted components and full showcase are excluded from this public release. The card links to official sources only. Uilora allows credited application/open-source use under its terms; its free source was accessed through the normal signed-in Code view, with no premium source copied.
 
 Showcase code is lazy-loaded only for a full site. Snapshot dialogs contain images and restore focus on close. Local animations respect reduced-motion preferences. No new backend or environment variables are needed.
+
+### BoardUI design study
+Open `http://127.0.0.1:5173/?showcase=boardui#ui-library` after `npm run dev`, or use the BoardUI card in UI Library. Includes six real free BoardUI components, an original dashboard before/after scanner, and scroll-driven static component thumbnails. Selected upstream source and MIT notice are retained in `vendor/boardui`; no Pro source is included. This is an independent study rather than the official BoardUI site or full catalogue. See `src/ui-library/SOURCES.md`.
+
+If changing vendored BoardUI component classes or tokens, run `npm run build:boardui` before `npm run build` to regenerate its scoped CSS.
+
+### Hero layout studies
+In **UI Designs and Tips**, open one of five hero studies to switch between the coloured blueprint and the finished design, drag the comparison slider, replay/pause motion, and explore numbered sketch annotations. The studies follow the user-supplied marcelodesignxh reel; readable wording is retained, with font/small-detail approximations documented in `src/ui-tips/hero-studies/SOURCES.md`. Product/brewing motion uses short silent crops from the supplied video. No orders or forms are submitted.

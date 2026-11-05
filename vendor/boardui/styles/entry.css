@@ -1,0 +1,6 @@
+@import "tailwindcss" source(none);
+@import "./theme.css";
+@import "./typography.css";
+@source "../components";
+@custom-variant rtl (&:dir(rtl));
+@custom-variant ltr (&:dir(ltr));

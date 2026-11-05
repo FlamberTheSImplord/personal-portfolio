@@ -71,3 +71,13 @@ User replaced the monochrome requirement with individual colour palettes. `site-
 ## Production release decision — 2026-11-06 (current)
 
 The user selected a reference-only Forge card pending permission. No adapted Forge component source, derivative utility styles or Forma snapshot is included in this release. The old local implementation described historically above was removed before publication. The official Forge website thumbnail and outbound website/GitHub/reference links remain. There are four available full websites and five library cards. The old Forge query URL renders a reference-only notice, never an adapted component.
+
+## BoardUI — added 2026-11-06
+- Official: https://www.boardui.com/ · free source: https://github.com/BoardUI/boardui · terms: https://www.boardui.com/license .
+- Six actual upstream free components: Switch, Checkbox, Slider, Radio, Tabs and SegmentedControl. Source and shared theme/typography are under `vendor/boardui`, with the complete MIT license and a revision/adaptation notice. No paid Pro source is included.
+- Original independent landing-page composition, dashboard mockup, before/after scanner and eight non-interactive orbit thumbnails. These are not official BoardUI marketing-page source or an exact copy of the whole catalogue. Reference interactions: https://www.vengenceui.com/ (scanner), https://animate-ui.com/ (scrolling component arrangement), https://uiverse.io/ (six interactive showcases). Those sites' source was not copied for this addition.
+- Reel: https://www.instagram.com/reels/DfQoEk3DosD/ . Free MIT code permits reuse with the notice retained. Pro terms separately restrict source redistribution and competing libraries; buying Pro does not by itself grant those rights.
+- Existing React 18 retained. Unused React 19 public ref forwarding removed, local measurement ref retained. Imports are relative; Tailwind output is scoped under `.bui-kit` using `npm run build:boardui`. Keep source MIT notice with redistributed copies.
+
+## SmoothUI — reference only, 2026-11-06
+User requested an official reference card without a landing page or component integration. Website: https://smoothui.dev/ . Repository: https://github.com/educlopez/smoothui . Repository LICENSE verified as MIT, copyright 2024 Eduardo Calvo: https://github.com/educlopez/smoothui/blob/main/LICENSE . Only an official-homepage browser screenshot is stored at public/ui-library/thumbnails/smoothui.png; no component or marketing-page source copied. Card links directly to official website, repository and license. Reference-only is a user choice, not a licensing blocker.
