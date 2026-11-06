@@ -85,3 +85,7 @@ If changing vendored BoardUI component classes or tokens, run `npm run build:boa
 
 ### Hero layout studies
 In **UI Designs and Tips**, open one of five hero studies to switch between the coloured blueprint and the finished design, drag the comparison slider, replay/pause motion, and explore numbered sketch annotations. The studies follow the user-supplied marcelodesignxh reel; readable wording is retained, with font/small-detail approximations documented in `src/ui-tips/hero-studies/SOURCES.md`. Product/brewing motion uses short silent crops from the supplied video. No orders or forms are submitted.
+
+### Searchable UI tips
+
+Open `/#ui-tips`: two new square reel cards contain all 7 UX laws and 30 style-checklist items. Search titles, individual tips, or tags across the new reels and all existing form, paywall, and hero studies. Each new tip pairs a short “Don’t / Do instead” note with static sketches. Source labels are retained; sketches and suggested alternatives are adaptations, not pixel-exact copies. See `src/ui-tips/SOURCES.md`. No new dependencies or environment setup.

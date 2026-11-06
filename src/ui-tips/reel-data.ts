@@ -1,0 +1,47 @@
+export type Tip = {title:string;tags:string[];dont:string;do:string;sketch:string}
+export type ReelStudy = {id:string;title:string;author:string;url:string;tags:string[];tips:Tip[];note:string}
+export const styleTips:Tip[] = [
+ {title:'harsh gradients',tags:['colour'],dont:'Loud colour shifts.',do:'Soften the transition.',sketch:'gradient'},
+ {title:'lucide icons',tags:['icons'],dont:'Default icons everywhere.',do:'Use icons with a purpose.',sketch:'icons'},
+ {title:'pure white background',tags:['colour','surface'],dont:'One flat white canvas.',do:'Add subtle surface contrast.',sketch:'surface'},
+ {title:'rainbow coloring',tags:['colour'],dont:'Every element, a new colour.',do:'One accent. Clear roles.',sketch:'colour'},
+ {title:'drop shadows',tags:['surface'],dont:'Heavy shadows on everything.',do:'Use depth sparingly.',sketch:'shadow'},
+ {title:'3 feature cards in a row',tags:['layout','cards'],dont:'Three identical filler cards.',do:'Let the content set the layout.',sketch:'cards'},
+ {title:'emojis',tags:['icons','copy'],dont:'Emoji in every heading.',do:'Let the heading speak.',sketch:'emoji'},
+ {title:'liquid glass',tags:['surface','contrast'],dont:'Blur that obscures content.',do:'Keep surfaces readable.',sketch:'glass'},
+ {title:'em dashes',tags:['copy'],dont:'A dash in every sentence.',do:'Short, direct sentences.',sketch:'copy'},
+ {title:'inter/geist/space grotesk',tags:['typography'],dont:'A default type system.',do:'Choose type for the brand.',sketch:'type'},
+ {title:'colored left stripe',tags:['layout','cards'],dont:'Accent stripes on every card.',do:'Use spacing and type.',sketch:'stripe'},
+ {title:'fake testimonials',tags:['trust','copy'],dont:'Invented customer quotes.',do:'Real proof, with permission.',sketch:'proof'},
+ {title:'bento grids',tags:['layout','grid'],dont:'Boxes without a reading order.',do:'Build a clear hierarchy.',sketch:'bento'},
+ {title:'terminal windows',tags:['product','demo'],dont:'A fake terminal for any product.',do:'Show the actual interface.',sketch:'terminal'},
+ {title:'“it’s not x, it’s y”',tags:['copy'],dont:'“It’s not X, it’s Y.”',do:'Say what the product does.',sketch:'compare'},
+ {title:'checkmark bullets',tags:['icons','copy'],dont:'Checks beside every claim.',do:'Keep only useful benefits.',sketch:'checklist'},
+ {title:'3 pricing tiers',tags:['pricing','choice'],dont:'Three plans by habit.',do:'Offer meaningful choices.',sketch:'pricing'},
+ {title:'no real product demos',tags:['product','demo','trust'],dont:'A product promise alone.',do:'Show a real task.',sketch:'demo'},
+ {title:'soft corner radius',tags:['surface','shape'],dont:'Every shape, a pill.',do:'Use a consistent radius scale.',sketch:'radius'},
+ {title:'purple and black',tags:['colour','brand'],dont:'A copied colour identity.',do:'Choose a fitting palette.',sketch:'brand'},
+ {title:'no skeleton loaders',tags:['loading','feedback'],dont:'A blank screen while loading.',do:'Show the coming structure.',sketch:'skeleton'},
+ {title:'radial orbs',tags:['colour','decoration'],dont:'Glow behind every section.',do:'Give the content the focus.',sketch:'orbs'},
+ {title:'dot grids',tags:['layout','decoration'],dont:'A pattern without a purpose.',do:'Leave room to read.',sketch:'dots'},
+ {title:'sparkle icons',tags:['icons','brand'],dont:'Sparkles as the whole identity.',do:'Use a specific visual cue.',sketch:'sparkle'},
+ {title:'animated arrows',tags:['motion','navigation'],dont:'Every arrow keeps moving.',do:'Animate useful feedback.',sketch:'arrow'},
+ {title:'no TOS',tags:['trust','footer'],dont:'Missing terms.',do:'Link clear terms of service.',sketch:'terms'},
+ {title:'no privacy policy',tags:['trust','footer'],dont:'Unclear data handling.',do:'Link the privacy policy.',sketch:'privacy'},
+ {title:'hover animations',tags:['motion','accessibility'],dont:'Motion on every hover.',do:'Subtle, optional feedback.',sketch:'hover'},
+ {title:'neon colors',tags:['colour','contrast'],dont:'Neon on every surface.',do:'Reserve bright colour for focus.',sketch:'neon'},
+ {title:'basic pastel colors',tags:['colour','brand'],dont:'Pastels chosen by default.',do:'Choose tones with a purpose.',sketch:'pastel'},
+]
+export const uxTips:Tip[] = [
+ {title:"Fitts’s Law",tags:['ux','targets','accessibility'],dont:'Too small. Too far. Too crowded.',do:'One big, easy-to-hit button.',sketch:'fitts'},
+ {title:"Hick’s Law",tags:['ux','choice','pricing'],dont:'Nine plans. Six actions.',do:'Fewer choices. One next step.',sketch:'hick'},
+ {title:'Zeigarnik Effect',tags:['ux','onboarding','progress'],dont:'An unfinished task with no cue.',do:'Show what’s left to finish.',sketch:'zeigarnik'},
+ {title:"Jakob’s Law",tags:['ux','navigation','familiarity'],dont:'Unfamiliar icons and labels.',do:'Use familiar patterns.',sketch:'jakob'},
+ {title:'Goal Gradient',tags:['ux','progress','motivation'],dont:'Hide the distance to the goal.',do:'Show progress and the finish.',sketch:'goal'},
+ {title:'Von Restorff',tags:['ux','hierarchy','colour'],dont:'Every action shouts.',do:'Let one action stand out.',sketch:'restorff'},
+ {title:"Miller’s Law",tags:['ux','grouping','navigation'],dont:'One long, ungrouped list.',do:'Chunk related items.',sketch:'miller'},
+]
+export const reelStudies:ReelStudy[] = [
+ {id:'ux-laws',title:'7 UX Laws',author:'peterstewiestartup',url:'https://www.instagram.com/reels/Ddz0B_LCnR-/',tags:['ux','usability','hierarchy','choice'],tips:uxTips,note:'Law names follow the reel. Sketches and short notes are study adaptations.'},
+ {id:'vibecoded',title:'30 reasons your site looks vibecoded',author:'aj.on.ai',url:'https://www.instagram.com/reels/DcEJDHBTyPY/',tags:['colour','typography','layout','copy','motion','trust'],tips:styleTips,note:'Original checklist labels. Sketches and “Do instead” notes are our analysis. Style choices need context.'},
+]

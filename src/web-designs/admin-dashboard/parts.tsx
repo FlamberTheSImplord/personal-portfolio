@@ -53,15 +53,15 @@ export function Count({ value, kind = 'int', delay = 0, drift = 0, min = -Infini
   return <span className="ad-count" aria-label={format(value, kind)}><span aria-hidden="true">{format(Math.min(max, Math.max(min, live)), kind)}</span></span>
 }
 
-// Glass card entrance from the reel: blurred, lowered and faded in, staggered by index.
+// Fade and slide only: filters inside the scaled canvas can hide painted layers.
 export function Glass({ i = 0, hover = true, className = '', children, ...rest }: { i?: number; hover?: boolean; className?: string; children: ReactNode } & HTMLMotionProps<'section'>) {
-  return <motion.section className={`ad-glass ${className}`} initial={{ opacity: 0, y: 18, scale: .985, filter: 'blur(10px)' }}
-    animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)', transition: { duration: .65, delay: .12 + i * .07, ease } }}
+  return <motion.section className={`ad-glass ${className}`} initial={{ opacity: 0, y: 18, scale: .985 }}
+    animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: .65, delay: .12 + i * .07, ease } }}
     whileHover={hover ? { y: -5, transition: { duration: .25, ease } } : undefined} {...rest}>{children}</motion.section>
 }
 
 export function Rise({ i = 0, className = '', children }: { i?: number; className?: string; children: ReactNode }) {
-  return <motion.div className={className} initial={{ opacity: 0, y: 10, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} transition={{ duration: .55, delay: i * .06, ease }}>{children}</motion.div>
+  return <motion.div className={className} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .55, delay: i * .06, ease }}>{children}</motion.div>
 }
 
 export type Option<T extends string> = { id: T; label: string; count?: number }

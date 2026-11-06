@@ -62,7 +62,7 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
     <Topbar />
     <main className="ad-panel" ref={panel}>
       <AnimatePresence mode="wait">
-        <motion.div key={screen} className="ad-screen" exit={{ opacity: 0, y: -6, filter: 'blur(12px)', transition: { duration: .28, ease } }}>
+        <motion.div key={screen} className="ad-screen" exit={{ opacity: 0, y: -6, transition: { duration: .28, ease } }}>
           {screen === 'overview' ? <Overview liveGreeting={liveGreeting} inReview={inReview} overdue={overdue} notify={notify} />
             : screen === 'finance' ? <Finance payouts={payoutState} setPayouts={setPayouts} notify={notify} />
               : screen === 'moderation' ? <Moderation listings={listingState} setListings={setListings} notify={notify} />
@@ -71,7 +71,7 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
       </AnimatePresence>
     </main>
     <div className="ad-toast-region" role="status" aria-live="polite">
-      <AnimatePresence>{toast && <motion.div key={toast.id} className="ad-toast" initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }} animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }} exit={{ opacity: 0, y: 10 }} transition={{ duration: .3, ease }}>
+      <AnimatePresence>{toast && <motion.div key={toast.id} className="ad-toast" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: .3, ease }}>
         {toast.message}{toast.undo && <button onClick={() => { toast.undo?.(); setToast(null) }}>Undo</button>}</motion.div>}</AnimatePresence>
     </div>
     <div className="ad-layer" ref={setLayer} />

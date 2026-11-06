@@ -20,7 +20,7 @@ function ReviewSheet({ listing, onClose, onDecide }: { listing: Listing; onClose
   useEffect(() => { close.current?.focus(); const onKey = (e: KeyboardEvent) => e.key === 'Escape' && latestClose.current(); addEventListener('keydown', onKey); return () => removeEventListener('keydown', onKey) }, [])
   return <motion.div className="ad-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose}>
     <motion.div className="ad-sheet" role="dialog" aria-modal="true" aria-label={`Review ${listing.title}`} onClick={e => e.stopPropagation()}
-      initial={{ opacity: 0, y: 30, scale: .96, filter: 'blur(8px)' }} animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }} exit={{ opacity: 0, y: 20, scale: .97 }} transition={{ duration: .4, ease }}>
+      initial={{ opacity: 0, y: 30, scale: .96 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 20, scale: .97 }} transition={{ duration: .4, ease }}>
       <div className="ad-sheet-art"><SceneArt scene={listing.scene} title={listing.title} /><span className="ad-chip-dark"><Image size={10} />{listing.photos} photos</span></div>
       <div className="ad-sheet-body">
         <button ref={close} className="ad-icon-btn ad-sheet-close" onClick={onClose} aria-label="Close review"><X size={14} /></button>
@@ -69,7 +69,7 @@ export default function Moderation({ listings, setListings, notify }: { listings
     </Rise>
     <div className="ad-listing-grid">
       <AnimatePresence>
-        {shown.map((l, i) => <Glass key={l.id} i={3 + i} className="ad-listing" exit={{ opacity: 0, scale: .9, filter: 'blur(8px)', transition: { duration: .3 } }}>
+        {shown.map((l, i) => <Glass key={l.id} i={3 + i} className="ad-listing" exit={{ opacity: 0, scale: .9, transition: { duration: .3 } }}>
           <div className="ad-listing-art"><SceneArt scene={l.scene} title={l.title} />
             <span className={`ad-chip-dark status-${l.status}`}><i />{statusName[l.status]}</span><span className="ad-chip-dark ad-photos"><Image size={10} />{l.photos}</span><span className="ad-chip-dark ad-type">{l.type}</span></div>
           <div className="ad-listing-body">

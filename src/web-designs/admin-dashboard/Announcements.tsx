@@ -11,7 +11,7 @@ function Composer({ onCancel, onCreate }: { onCancel: () => void; onCreate: (a: 
   const [title, setTitle] = useState(''), [body, setBody] = useState(''), [audience, setAudience] = useState<Audience>('Everyone')
   const create = (status: Announcement['status']) => title.trim() && onCreate({ title: title.trim(), body: body.trim() || 'No message added.', audience, status })
   return <motion.form className="ad-glass ad-composer" onSubmit={e => { e.preventDefault(); create('sent') }}
-    initial={{ opacity: 0, height: 0, filter: 'blur(8px)' }} animate={{ opacity: 1, height: 'auto', filter: 'blur(0px)' }} exit={{ opacity: 0, height: 0, filter: 'blur(8px)' }} transition={{ duration: .4, ease }}>
+    initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: .4, ease }}>
     <div className="ad-composer-inner">
       <input autoFocus aria-label="Announcement title" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
       <textarea aria-label="Announcement message" placeholder="Write a short message for the team…" rows={2} value={body} onChange={e => setBody(e.target.value)} />
@@ -59,7 +59,7 @@ export default function Announcements({ items, setItems, notify }: { items: Anno
     }} />}</AnimatePresence>
     <div className="ad-ann-list">
       <AnimatePresence>
-        {shown.map((a, i) => <Glass key={a.id} i={3 + i} className="ad-ann" exit={{ opacity: 0, x: -30, filter: 'blur(8px)', transition: { duration: .3 } }}>
+        {shown.map((a, i) => <Glass key={a.id} i={3 + i} className="ad-ann" exit={{ opacity: 0, x: -30, transition: { duration: .3 } }}>
           <div className="ad-ann-top"><h3>{a.pinned && <MapPin size={13} className="ad-pin" />}{a.title}</h3><em className={`ad-pill ${a.status}`}><i />{a.status}</em></div>
           <p>{a.body}</p>
           <div className="ad-ann-foot">
