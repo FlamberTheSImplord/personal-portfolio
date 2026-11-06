@@ -57,7 +57,7 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
   useEffect(() => { panel.current?.scrollTo({ top: 0 }) }, [screen])
   const inReview = listingState.filter(l => l.status === 'review').length, overdue = payoutState.filter(p => p.status === 'overdue').length
   return <LayerContext.Provider value={layer}>
-    <div className="ad-backdrop" aria-hidden="true"><i /><i /><i /></div>
+    <div className="ad-backdrop" aria-hidden="true" />
     <Sidebar screen={screen} go={go} badges={{ moderation: inReview, finance: overdue }} />
     <Topbar />
     <main className="ad-panel" ref={panel}>

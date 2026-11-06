@@ -1,8 +1,5 @@
-/* Admin Dashboard V2. The canvas is the reel's 1440×790 composition, scaled to fit.
-   No backdrop-filter: on some Chromium setups (software compositing, devicePixelRatio 2)
-   large backdrop-filter surfaces inside the scaled canvas vanish after painting.
-   Foreground filters (including blur(0px)) also retain compositing layers.
-   Keep blur on the decorative backdrop only; fade and slide the content. */
+/* Keep the dashboard shell in normal paint layers. CSS zoom scales layout
+   without transforming the full canvas; gradients supply the glass backdrop. */
 .ad-toolbar{display:flex;align-items:center;justify-content:space-between;gap:15px;margin-bottom:17px;flex-wrap:wrap}
 .ad-toolbar-tabs{display:flex;gap:4px;padding:4px;border-radius:9px;background:#eef0f4;border:1px solid var(--line)}
 .ad-toolbar-tabs button{border:0;background:none;padding:7px 13px;border-radius:6px;font-size:11px;color:#7a8393;cursor:pointer}
@@ -14,27 +11,19 @@
 .ad-switch[aria-checked=true]>span{background:#1aa3d9}.ad-switch[aria-checked=true]>span i{transform:translateX(11px)}
 .ad-replay{border:0;background:none;color:#7a8393;display:flex;gap:6px;align-items:center;font-size:10px;cursor:pointer}
 .ad-stage{width:100%;aspect-ratio:1440/790;position:relative;overflow:hidden;border-radius:14px;background:#04192c;box-shadow:0 14px 45px #0a253f33}
-.ad-canvas{position:absolute;top:0;left:0;width:1440px;height:790px;transform:scale(var(--ad-scale));transform-origin:top left;overflow:hidden;font-family:'Inter',sans-serif;color:#18202c;-webkit-font-smoothing:antialiased;
+.ad-canvas{position:absolute;top:0;left:0;width:1440px;height:790px;zoom:var(--ad-scale);overflow:hidden;font-family:'Inter',sans-serif;color:#18202c;-webkit-font-smoothing:antialiased;
   --ad-ink:#18202c;--ad-muted:#5a6b7b;--ad-faint:#7f8f9d;--ad-dark:#1d232e;--ad-card:rgba(226,238,245,.56);--ad-card-line:rgba(255,255,255,.58);--ad-cyan:#1aa3d9}
 .ad-canvas button{font-family:inherit;cursor:pointer}
 .ad-canvas h1,.ad-canvas h2,.ad-canvas h3,.ad-canvas h4,.ad-canvas p{margin:0;font-family:inherit}
 .ad-canvas input,.ad-canvas textarea{font-family:inherit}
 .ad-sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 
-/* Backdrop: deep navy with drifting teal and blue light behind the glass. */
-.ad-backdrop{position:absolute;inset:0;background:linear-gradient(160deg,#08324a 0%,#031a2e 38%,#062440 70%,#0f4a5c 100%)}
-.ad-backdrop i{position:absolute;border-radius:50%;filter:blur(70px);animation:ad-drift 18s ease-in-out infinite alternate}
-.ad-backdrop i:nth-child(1){width:520px;height:520px;left:-120px;top:-140px;background:#1590b5;opacity:.55}
-.ad-backdrop i:nth-child(2){width:640px;height:520px;right:-160px;top:180px;background:#1e5fb0;opacity:.55;animation-delay:-6s}
-.ad-backdrop i:nth-child(3){width:700px;height:420px;right:120px;bottom:-240px;background:#1fa5a8;opacity:.6;animation-delay:-12s}
-@keyframes ad-drift{to{transform:translate(40px,30px) scale(1.08)}}
-/* Shell entrance runs as CSS so it always completes, whatever happens to JS animation frames. */
-.ad-sidebar{animation:ad-in-side .7s cubic-bezier(.22,1,.36,1) backwards}
-.ad-topbar{animation:ad-in-top .7s .1s cubic-bezier(.22,1,.36,1) backwards}
-.ad-panel{animation:ad-in-panel .8s .15s cubic-bezier(.22,1,.36,1) backwards}
-@keyframes ad-in-side{from{opacity:0;transform:translateX(-14px)}}
-@keyframes ad-in-top{from{opacity:0;transform:translateY(-10px)}}
-@keyframes ad-in-panel{from{opacity:0;transform:scale(.985)}}
+/* Soft light without filtered surfaces or independent animated layers. */
+.ad-backdrop{position:absolute;inset:0;background:
+  radial-gradient(ellipse 450px 430px at 8% 8%,#117b97a6,transparent 78%),
+  radial-gradient(ellipse 600px 520px at 100% 58%,#1e5fb08c,transparent 82%),
+  radial-gradient(ellipse 700px 400px at 65% 110%,#1fa5a899,transparent 82%),
+  linear-gradient(160deg,#08324a 0%,#031a2e 38%,#062440 70%,#0f4a5c 100%)}
 
 /* Sidebar */
 .ad-sidebar{position:absolute;left:44px;top:20px;width:197px;height:755px;border-radius:22px;padding:8px 8px 8px;display:flex;flex-direction:column;color:#fff;
@@ -242,4 +231,4 @@
 .ad-count{font-variant-numeric:tabular-nums}
 
 @media(max-width:580px){.ad-toolbar{align-items:flex-start}.ad-toolbar-tabs{flex-wrap:wrap}.ad-toolbar-tabs button{padding:6px 9px;font-size:10px}.ad-stage{border-radius:8px}}
-@media(prefers-reduced-motion:reduce){.ad-backdrop i,.ad-sidebar,.ad-topbar,.ad-panel{animation:none}.ad-glass::after{display:none}.ad-switch>span i{transition:none}}
+@media(prefers-reduced-motion:reduce){.ad-glass::after{display:none}.ad-switch>span i{transition:none}}
