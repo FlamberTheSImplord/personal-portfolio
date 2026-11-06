@@ -50,12 +50,12 @@ export const format = (v: number, kind: Format) => formats[kind](v)
 
 export function Count({ value, kind = 'int', delay = 0, drift = 0, min = -Infinity, max = Infinity }: { value: number; kind?: Format; delay?: number; drift?: number; min?: number; max?: number }) {
   const live = useCount(value, { delay, drift })
-  return <span className="ad-count" aria-label={format(value, kind)}><span aria-hidden="true">{format(Math.min(max, Math.max(min, live)), kind)}</span></span>
+  return <span className="adminv2-count" aria-label={format(value, kind)}><span aria-hidden="true">{format(Math.min(max, Math.max(min, live)), kind)}</span></span>
 }
 
 // Fade and slide only: filters inside the scaled canvas can hide painted layers.
 export function Glass({ i = 0, hover = true, className = '', children, ...rest }: { i?: number; hover?: boolean; className?: string; children: ReactNode } & HTMLMotionProps<'section'>) {
-  return <motion.section className={`ad-glass ${className}`} initial={{ opacity: 0, y: 18, scale: .985 }}
+  return <motion.section className={`adminv2-glass ${className}`} initial={{ opacity: 0, y: 18, scale: .985 }}
     animate={{ opacity: 1, y: 0, scale: 1, transition: { duration: .65, delay: .12 + i * .07, ease } }}
     whileHover={hover ? { y: -5, transition: { duration: .25, ease } } : undefined} {...rest}>{children}</motion.section>
 }
@@ -79,20 +79,20 @@ export function Segmented<T extends string>({ options, value, onChange, classNam
     el.querySelectorAll('button').forEach(button => observer.observe(button))
     return () => observer.disconnect()
   }, [value, options.length])
-  return <div ref={box} className={`ad-segmented ${className}`} role="tablist">
-    {pill && <motion.span className="ad-segmented-pill" aria-hidden="true" initial={false} animate={pill} transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
+  return <div ref={box} className={`adminv2-segmented ${className}`} role="tablist">
+    {pill && <motion.span className="adminv2-segmented-pill" aria-hidden="true" initial={false} animate={pill} transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
     {options.map(o => <button key={o.id} role="tab" aria-selected={value === o.id} onClick={() => onChange(o.id)}>
-    <span className="ad-segmented-label">{o.label}{o.count !== undefined && <i><Count value={o.count} /></i>}</span>
+    <span className="adminv2-segmented-label">{o.label}{o.count !== undefined && <i><Count value={o.count} /></i>}</span>
   </button>)}</div>
 }
 
 export function Trend({ value, up }: { value: string; up: boolean }) {
-  return <span className={`ad-trend ${up ? 'up' : 'down'}`}>{up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}{value}</span>
+  return <span className={`adminv2-trend ${up ? 'up' : 'down'}`}>{up ? <TrendingUp size={10} /> : <TrendingDown size={10} />}{value}</span>
 }
 
 export function StatCard({ i, icon: Icon, value, kind = 'int', label, detail, trend, drift = 0 }: { i: number; icon: LucideIcon; value: number; kind?: Format; label: string; detail: string; trend?: { value: string; up: boolean }; drift?: number }) {
-  return <Glass i={i} className="ad-stat">
-    <div className="ad-stat-top"><span className="ad-icon-circle"><Icon size={14} /></span>{trend && <Trend {...trend} />}</div>
+  return <Glass i={i} className="adminv2-stat">
+    <div className="adminv2-stat-top"><span className="adminv2-icon-circle"><Icon size={14} /></span>{trend && <Trend {...trend} />}</div>
     <strong><Count value={value} kind={kind} delay={.2 + i * .07} drift={drift} min={0} /></strong>
     <h4>{label}</h4><p>{detail}</p>
   </Glass>
@@ -102,18 +102,18 @@ const axis = ['$60K', '$40K', '$20K', '0']
 export function BarChart({ data, max = 60000, delay = .3, labelLatest = true }: { data: { label: string; value: number; note?: string }[]; max?: number; delay?: number; labelLatest?: boolean }) {
   const [hover, setHover] = useState<number | null>(null)
   const shown = hover ?? (labelLatest ? data.length - 1 : -1)
-  return <div className="ad-bars" onMouseLeave={() => setHover(null)}>
-    <div className="ad-axis" aria-hidden="true">{axis.map(a => <span key={a}>{a}</span>)}</div>
-    <div className="ad-plot" role="img" aria-label={data.map(d => `${d.label} ${format(d.value, 'usd')}`).join(', ')}>
-      {data.map((d, i) => <motion.div key={d.label} className={`ad-bar-col ${i === data.length - 1 ? 'latest' : ''} ${i === shown ? 'shown' : ''}`} onMouseEnter={() => setHover(i)}>
-        <div className="ad-bar-track">
-          <motion.div className="ad-bar" initial={{ height: 0 }} animate={{ height: `${d.value / max * 100}%` }} transition={{ duration: .9, delay: delay + i * .07, ease }}>
-            {i === shown && <motion.span className="ad-bar-label" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: hover === null ? delay + data.length * .07 + .5 : 0 }}>
+  return <div className="adminv2-bars" onMouseLeave={() => setHover(null)}>
+    <div className="adminv2-axis" aria-hidden="true">{axis.map(a => <span key={a}>{a}</span>)}</div>
+    <div className="adminv2-plot" role="img" aria-label={data.map(d => `${d.label} ${format(d.value, 'usd')}`).join(', ')}>
+      {data.map((d, i) => <motion.div key={d.label} className={`adminv2-bar-col ${i === data.length - 1 ? 'latest' : ''} ${i === shown ? 'shown' : ''}`} onMouseEnter={() => setHover(i)}>
+        <div className="adminv2-bar-track">
+          <motion.div className="adminv2-bar" initial={{ height: 0 }} animate={{ height: `${d.value / max * 100}%` }} transition={{ duration: .9, delay: delay + i * .07, ease }}>
+            {i === shown && <motion.span className="adminv2-bar-label" initial={{ opacity: 0, y: 4 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: hover === null ? delay + data.length * .07 + .5 : 0 }}>
               {format(d.value, 'usd')}{hover !== null && d.note && <small>{d.note}</small>}
             </motion.span>}
           </motion.div>
         </div>
-        <span className="ad-bar-month">{d.label}</span>
+        <span className="adminv2-bar-month">{d.label}</span>
       </motion.div>)}
     </div>
   </div>
@@ -123,7 +123,7 @@ export function Donut({ items, selected, onSelect }: { items: { name: string; va
   const total = items.reduce((sum, item) => sum + item.value, 0)
   const active = items.find(item => item.name === selected)
   let start = 0
-  return <div className="ad-donut">
+  return <div className="adminv2-donut">
     <svg viewBox="0 0 140 140" role="img" aria-label={`Commission by office, total ${format(total, 'k')}`}>
       {items.map((item, i) => {
         const fraction = item.value / total, rotate = start * 360 - 90
@@ -134,19 +134,19 @@ export function Donut({ items, selected, onSelect }: { items: { name: string; va
           onClick={() => onSelect(selected === item.name ? null : item.name)} style={{ cursor: 'pointer' }} />
       })}
     </svg>
-    <div className="ad-donut-center"><strong><Count value={active?.value ?? total} kind="k" delay={.45} /></strong><span>{active ? active.name : 'commission'}</span></div>
+    <div className="adminv2-donut-center"><strong><Count value={active?.value ?? total} kind="k" delay={.45} /></strong><span>{active ? active.name : 'commission'}</span></div>
   </div>
 }
 
 export function Ring({ value, label }: { value: number; label: string }) {
-  return <div className="ad-ring">
-    <svg viewBox="0 0 140 140" aria-hidden="true"><circle cx="70" cy="70" r="52" className="ad-ring-track" />
-      <motion.circle cx="70" cy="70" r="52" className="ad-ring-arc" transform="rotate(-90 70 70)" initial={{ pathLength: 0 }} animate={{ pathLength: value / 100 }} transition={{ duration: 1.4, delay: .5, ease }} />
+  return <div className="adminv2-ring">
+    <svg viewBox="0 0 140 140" aria-hidden="true"><circle cx="70" cy="70" r="52" className="adminv2-ring-track" />
+      <motion.circle cx="70" cy="70" r="52" className="adminv2-ring-arc" transform="rotate(-90 70 70)" initial={{ pathLength: 0 }} animate={{ pathLength: value / 100 }} transition={{ duration: 1.4, delay: .5, ease }} />
     </svg>
     <div><strong><Count value={value} kind="pct0" delay={.5} /></strong><span>{label}</span></div>
   </div>
 }
 
 export function Avatar({ initials, size = 26 }: { initials: string; size?: number }) {
-  return <span className="ad-avatar" style={{ width: size, height: size, fontSize: size * .36 }} aria-hidden="true">{initials}</span>
+  return <span className="adminv2-avatar" style={{ width: size, height: size, fontSize: size * .36 }} aria-hidden="true">{initials}</span>
 }

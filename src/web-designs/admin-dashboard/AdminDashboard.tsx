@@ -24,23 +24,23 @@ function Sidebar({ screen, go, badges }: { screen: Screen; go: (s: Screen) => vo
   const nav = useRef<HTMLElement>(null)
   const [pill, setPill] = useState<{ y: number; height: number } | null>(null)
   useLayoutEffect(() => { const item = nav.current?.querySelector<HTMLElement>('[aria-current="page"]'); if (item) setPill({ y: item.offsetTop, height: item.offsetHeight }) }, [screen])
-  return <aside className="ad-sidebar">
-    <div className="ad-brand"><span><InfinityIcon size={17} /></span><div><b>Code XR Admin</b><small>Control center</small></div></div>
-    <nav ref={nav} aria-label="Admin navigation">{pill && <motion.span className="ad-nav-active" aria-hidden="true" initial={false} animate={pill} transition={{ type: 'spring', stiffness: 380, damping: 34 }} />}{groups.map(([label, items]) => <div key={label} className="ad-nav-group"><span className="ad-nav-label">{label}</span>
+  return <aside className="adminv2-sidebar">
+    <div className="adminv2-brand"><span><InfinityIcon size={17} /></span><div><b>Code XR Admin</b><small>Control center</small></div></div>
+    <nav ref={nav} aria-label="Admin navigation">{pill && <motion.span className="adminv2-nav-active" aria-hidden="true" initial={false} animate={pill} transition={{ type: 'spring', stiffness: 380, damping: 34 }} />}{groups.map(([label, items]) => <div key={label} className="adminv2-nav-group"><span className="adminv2-nav-label">{label}</span>
       {items.map(({ name, icon: Icon, screen: target, badge }) => {
         const content = <><Icon size={14} /><span>{name}</span>{!!badge && <i>{badge}</i>}</>
-        return target ? <button key={name} className="ad-nav-item" aria-current={target === screen ? 'page' : undefined} onClick={() => go(target)}>{content}</button>
-          : <span key={name} className="ad-nav-item inert" title="Not shown in the reference">{content}</span>
+        return target ? <button key={name} className="adminv2-nav-item" aria-current={target === screen ? 'page' : undefined} onClick={() => go(target)}>{content}</button>
+          : <span key={name} className="adminv2-nav-item inert" title="Not shown in the reference">{content}</span>
       })}</div>)}</nav>
-    <div className="ad-plan"><div><b>Business plan</b><small>13 of 20 seats</small></div><span><motion.i initial={{ width: 0 }} animate={{ width: '65%' }} transition={{ duration: 1.1, delay: .5, ease }} /></span></div>
+    <div className="adminv2-plan"><div><b>Business plan</b><small>13 of 20 seats</small></div><span><motion.i initial={{ width: 0 }} animate={{ width: '65%' }} transition={{ duration: 1.1, delay: .5, ease }} /></span></div>
   </aside>
 }
 
 function Topbar() {
-  return <header className="ad-topbar">
-    <label className="ad-search"><Search size={14} /><span className="ad-sr-only">Search</span><input placeholder="Search people, clients, listings, requests..." /><kbd>⌘K</kbd></label>
-    <div className="ad-top-tools"><button className="ad-round dark" aria-label="Theme colours"><Palette size={14} /></button><button className="ad-round rainbow" aria-label="Assistant"><Sparkles size={14} /></button>
-      <button className="ad-round light" aria-label="Notifications"><Bell size={14} /><i /></button><span className="ad-user"><span className="ad-avatar big">AM</span><span><b>Andriy Melnyk</b><small>Owner</small></span></span></div>
+  return <header className="adminv2-topbar">
+    <label className="adminv2-search"><Search size={14} /><span className="adminv2-sr-only">Search</span><input placeholder="Search people, clients, listings, requests..." /><kbd>⌘K</kbd></label>
+    <div className="adminv2-top-tools"><button className="adminv2-round dark" aria-label="Theme colours"><Palette size={14} /></button><button className="adminv2-round rainbow" aria-label="Assistant"><Sparkles size={14} /></button>
+      <button className="adminv2-round light" aria-label="Notifications"><Bell size={14} /><i /></button><span className="adminv2-user"><span className="adminv2-avatar big">AM</span><span><b>Andriy Melnyk</b><small>Owner</small></span></span></div>
   </header>
 }
 
@@ -57,12 +57,12 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
   useEffect(() => { panel.current?.scrollTo({ top: 0 }) }, [screen])
   const inReview = listingState.filter(l => l.status === 'review').length, overdue = payoutState.filter(p => p.status === 'overdue').length
   return <LayerContext.Provider value={layer}>
-    <div className="ad-backdrop" aria-hidden="true" />
+    <div className="adminv2-backdrop" aria-hidden="true" />
     <Sidebar screen={screen} go={go} badges={{ moderation: inReview, finance: overdue }} />
     <Topbar />
-    <main className="ad-panel" ref={panel}>
+    <main className="adminv2-panel" ref={panel}>
       <AnimatePresence mode="wait">
-        <motion.div key={screen} className="ad-screen" exit={{ opacity: 0, y: -6, transition: { duration: .28, ease } }}>
+        <motion.div key={screen} className="adminv2-screen" exit={{ opacity: 0, y: -6, transition: { duration: .28, ease } }}>
           {screen === 'overview' ? <Overview liveGreeting={liveGreeting} inReview={inReview} overdue={overdue} notify={notify} />
             : screen === 'finance' ? <Finance payouts={payoutState} setPayouts={setPayouts} notify={notify} />
               : screen === 'moderation' ? <Moderation listings={listingState} setListings={setListings} notify={notify} />
@@ -70,11 +70,11 @@ function AdminApp({ liveGreeting, screen, go }: { liveGreeting: boolean; screen:
         </motion.div>
       </AnimatePresence>
     </main>
-    <div className="ad-toast-region" role="status" aria-live="polite">
-      <AnimatePresence>{toast && <motion.div key={toast.id} className="ad-toast" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: .3, ease }}>
+    <div className="adminv2-toast-region" role="status" aria-live="polite">
+      <AnimatePresence>{toast && <motion.div key={toast.id} className="adminv2-toast" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} transition={{ duration: .3, ease }}>
         {toast.message}{toast.undo && <button onClick={() => { toast.undo?.(); setToast(null) }}>Undo</button>}</motion.div>}</AnimatePresence>
     </div>
-    <div className="ad-layer" ref={setLayer} />
+    <div className="adminv2-layer" ref={setLayer} />
   </LayerContext.Provider>
 }
 
@@ -86,16 +86,16 @@ export default function AdminDashboard() {
   const stage = useRef<HTMLDivElement>(null)
   useEffect(() => { const el = stage.current; if (!el) return; const observer = new ResizeObserver(([entry]) => setScale(entry.contentRect.width / 1440)); observer.observe(el); return () => observer.disconnect() }, [])
   return <>
-    <div className="ad-toolbar">
-      <div className="ad-toolbar-tabs" aria-label="Choose screen">{screens.map(s => <button key={s.id} aria-pressed={screen === s.id} onClick={() => setScreen(s.id)}>{s.name}</button>)}</div>
-      <div className="ad-toolbar-right">
-        <button className="ad-switch" role="switch" aria-checked={liveGreeting} onClick={() => setLiveGreeting(!liveGreeting)}><span><i /></span>Live greeting</button>
-        <button className="ad-replay" onClick={() => setReplay(n => n + 1)}>Replay entrance <ArrowUpRight size={13} /></button>
+    <div className="adminv2-toolbar">
+      <div className="adminv2-toolbar-tabs" aria-label="Choose screen">{screens.map(s => <button key={s.id} aria-pressed={screen === s.id} onClick={() => setScreen(s.id)}>{s.name}</button>)}</div>
+      <div className="adminv2-toolbar-right">
+        <button className="adminv2-switch" role="switch" aria-checked={liveGreeting} onClick={() => setLiveGreeting(!liveGreeting)}><span><i /></span>Live greeting</button>
+        <button className="adminv2-replay" onClick={() => setReplay(n => n + 1)}>Replay entrance <ArrowUpRight size={13} /></button>
       </div>
     </div>
     <BrowserFrame tabs={[{ id: 'admin', title: 'Code XR Admin · Control center', favicon: <span className="fav-codexr"><InfinityIcon size={10} /></span> }]} active="admin" url={`codexr-admin.app/#/${screen}`} onReload={() => setReplay(n => n + 1)}>
-      <div className="ad-stage" ref={stage}>
-        <div className="ad-canvas" style={{ '--ad-scale': scale } as CSSProperties}>
+      <div className="adminv2-stage" ref={stage}>
+        <div className="adminv2-canvas" style={{ '--adminv2-scale': scale } as CSSProperties}>
           <MotionConfig reducedMotion="user"><AdminApp key={replay} liveGreeting={liveGreeting} screen={screen} go={setScreen} /></MotionConfig>
         </div>
       </div>

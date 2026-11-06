@@ -10,17 +10,17 @@ const matches = (a: Announcement, tab: Tab) => tab === 'all' || (tab === 'pinned
 function Composer({ onCancel, onCreate }: { onCancel: () => void; onCreate: (a: Pick<Announcement, 'title' | 'body' | 'audience' | 'status'>) => void }) {
   const [title, setTitle] = useState(''), [body, setBody] = useState(''), [audience, setAudience] = useState<Audience>('Everyone')
   const create = (status: Announcement['status']) => title.trim() && onCreate({ title: title.trim(), body: body.trim() || 'No message added.', audience, status })
-  return <motion.form className="ad-glass ad-composer" onSubmit={e => { e.preventDefault(); create('sent') }}
+  return <motion.form className="adminv2-glass adminv2-composer" onSubmit={e => { e.preventDefault(); create('sent') }}
     initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: .4, ease }}>
-    <div className="ad-composer-inner">
+    <div className="adminv2-composer-inner">
       <input autoFocus aria-label="Announcement title" placeholder="Title" value={title} onChange={e => setTitle(e.target.value)} />
       <textarea aria-label="Announcement message" placeholder="Write a short message for the team…" rows={2} value={body} onChange={e => setBody(e.target.value)} />
-      <div className="ad-composer-foot">
+      <div className="adminv2-composer-foot">
         <Segmented value={audience} onChange={setAudience} options={(['Everyone', 'Agents', 'Managers'] as Audience[]).map(a => ({ id: a, label: a }))} />
-        <span className="ad-composer-note">Demo only. Nothing is sent to Telegram.</span>
-        <button type="button" className="ad-btn" onClick={onCancel}>Cancel</button>
-        <button type="button" className="ad-btn" disabled={!title.trim()} onClick={() => create('scheduled')}><CalendarClock size={13} />Schedule for tomorrow</button>
-        <button type="submit" className="ad-btn dark" disabled={!title.trim()}><Send size={13} />Send now</button>
+        <span className="adminv2-composer-note">Demo only. Nothing is sent to Telegram.</span>
+        <button type="button" className="adminv2-btn" onClick={onCancel}>Cancel</button>
+        <button type="button" className="adminv2-btn" disabled={!title.trim()} onClick={() => create('scheduled')}><CalendarClock size={13} />Schedule for tomorrow</button>
+        <button type="submit" className="adminv2-btn dark" disabled={!title.trim()}><Send size={13} />Send now</button>
       </div>
     </div>
   </motion.form>
@@ -46,34 +46,34 @@ export default function Announcements({ items, setItems, notify }: { items: Anno
   const shown = [...items].sort((a, b) => Number(b.pinned) - Number(a.pinned)).filter(a => matches(a, tab))
   const tabs = (['all', 'sent', 'scheduled', 'pinned'] as Tab[]).map(t => ({ id: t, label: t[0].toUpperCase() + t.slice(1), count: items.filter(a => matches(a, t)).length }))
   return <>
-    <header className="ad-head">
+    <header className="adminv2-head">
       <Rise><h1>Announcements</h1><p>Message the team in the app and on Telegram</p></Rise>
-      <Rise i={1} className="ad-actions"><button className="ad-btn dark" aria-expanded={composing} onClick={() => setComposing(!composing)}>{composing ? <X size={13} /> : <Plus size={13} />}{composing ? 'Close' : 'New announcement'}</button></Rise>
+      <Rise i={1} className="adminv2-actions"><button className="adminv2-btn dark" aria-expanded={composing} onClick={() => setComposing(!composing)}>{composing ? <X size={13} /> : <Plus size={13} />}{composing ? 'Close' : 'New announcement'}</button></Rise>
     </header>
-    <Rise i={2}><Segmented className="ad-wide-tabs" value={tab} onChange={setTab} options={tabs} /></Rise>
+    <Rise i={2}><Segmented className="adminv2-wide-tabs" value={tab} onChange={setTab} options={tabs} /></Rise>
     <AnimatePresence>{composing && <Composer onCancel={() => setComposing(false)} onCreate={a => {
       const id = `a${Date.now()}`
       setItems(list => [{ ...a, id, date: a.status === 'sent' ? 'Just now' : 'Tomorrow, 9:00 AM', read: 0, total: audienceSize[a.audience], pinned: false }, ...list])
       if (a.status === 'sent') setFresh(f => [...f, id])
       setComposing(false); setTab('all'); notify(a.status === 'sent' ? 'Announcement sent to the team (demo).' : 'Announcement scheduled for tomorrow, 9:00 AM (demo).')
     }} />}</AnimatePresence>
-    <div className="ad-ann-list">
+    <div className="adminv2-ann-list">
       <AnimatePresence>
-        {shown.map((a, i) => <Glass key={a.id} i={3 + i} className="ad-ann" exit={{ opacity: 0, x: -30, transition: { duration: .3 } }}>
-          <div className="ad-ann-top"><h3>{a.pinned && <MapPin size={13} className="ad-pin" />}{a.title}</h3><em className={`ad-pill ${a.status}`}><i />{a.status}</em></div>
+        {shown.map((a, i) => <Glass key={a.id} i={3 + i} className="adminv2-ann" exit={{ opacity: 0, x: -30, transition: { duration: .3 } }}>
+          <div className="adminv2-ann-top"><h3>{a.pinned && <MapPin size={13} className="adminv2-pin" />}{a.title}</h3><em className={`adminv2-pill ${a.status}`}><i />{a.status}</em></div>
           <p>{a.body}</p>
-          <div className="ad-ann-foot">
-            <span className="ad-chip">{a.audience}</span><span className="ad-date">{a.date}</span>
-            {a.status === 'sent' && <span className="ad-read"><span className="ad-read-track"><motion.i initial={{ width: 0 }} animate={{ width: `${a.read / a.total * 100}%` }} transition={{ duration: .9, delay: .4 + i * .07, ease }} /></span><Count value={a.read} /> of {a.total} read</span>}
-            <span className="ad-ann-actions">
-              {a.status === 'scheduled' && <button className="ad-btn" onClick={() => { send(a.id); notify(`“${a.title}” sent now (demo).`) }}><Send size={12} />Send now</button>}
-              <button className="ad-btn" onClick={() => update(a.id, { pinned: !a.pinned })}><MapPin size={12} />{a.pinned ? 'Unpin' : 'Pin to the top'}</button>
-              <button className="ad-icon-btn" aria-label={`Delete “${a.title}”`} onClick={() => remove(a)}><Trash2 size={12} /></button>
+          <div className="adminv2-ann-foot">
+            <span className="adminv2-chip">{a.audience}</span><span className="adminv2-date">{a.date}</span>
+            {a.status === 'sent' && <span className="adminv2-read"><span className="adminv2-read-track"><motion.i initial={{ width: 0 }} animate={{ width: `${a.read / a.total * 100}%` }} transition={{ duration: .9, delay: .4 + i * .07, ease }} /></span><Count value={a.read} /> of {a.total} read</span>}
+            <span className="adminv2-ann-actions">
+              {a.status === 'scheduled' && <button className="adminv2-btn" onClick={() => { send(a.id); notify(`“${a.title}” sent now (demo).`) }}><Send size={12} />Send now</button>}
+              <button className="adminv2-btn" onClick={() => update(a.id, { pinned: !a.pinned })}><MapPin size={12} />{a.pinned ? 'Unpin' : 'Pin to the top'}</button>
+              <button className="adminv2-icon-btn" aria-label={`Delete “${a.title}”`} onClick={() => remove(a)}><Trash2 size={12} /></button>
             </span>
           </div>
         </Glass>)}
       </AnimatePresence>
-      {!shown.length && <p className="ad-empty">No announcements here yet.</p>}
+      {!shown.length && <p className="adminv2-empty">No announcements here yet.</p>}
     </div>
   </>
 }

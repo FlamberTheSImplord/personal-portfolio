@@ -24,7 +24,7 @@ button.bf-icon{cursor:pointer}button.bf-icon:hover{background:#eef1f6}
 .bf-omnibox b{font-weight:400;color:#1f2430}
 .bf-profile{display:grid;place-items:center;width:24px;height:24px;margin:0 3px;border-radius:50%;background:#e1e8ff;color:#3c56c9;font-size:8.5px;font-weight:600;flex:none}
 .bf-viewport{position:relative}
-.bf-viewport .wd-stage,.bf-viewport .ad-stage{border-radius:0;box-shadow:none}
+.bf-viewport .wd-stage,.bf-viewport .adminv2-stage{border-radius:0;box-shadow:none}
 .bf-favicon .fav-fluento{width:14px;height:14px;border-radius:4px;background:#25232b;display:grid;place-items:center}.bf-favicon .fav-fluento i{width:6px;height:6px;border:1.5px solid #fff;border-radius:1px}
 .bf-favicon .fav-ember{width:13px;height:13px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#ffb27a,#f0783d)}
 .bf-favicon .fav-codexr{width:14px;height:14px;border-radius:4px;background:linear-gradient(160deg,#22b0e8,#0b6f9e);color:#fff;display:grid;place-items:center}

@@ -19,24 +19,24 @@ export default function Overview({ liveGreeting, inReview, overdue, notify }: { 
   const data = months8.slice(-periods[period]).map(m => ({ label: m.month, value: Math.round(m.value * share / 100) * 100, note: `${Math.max(1, Math.round(m.deals * share))} deals` }))
   const sum = data.reduce((s, d) => s + d.value, 0), deals = months8.slice(-periods[period]).reduce((s, m) => s + Math.max(1, Math.round(m.deals * share)), 0)
   return <>
-    <header className="ad-head">
+    <header className="adminv2-head">
       <Rise><h1>{hello}, Andriy</h1><p>{date} · <Count value={inReview + overdue} /> things need your attention</p></Rise>
-      <Rise i={1} className="ad-actions"><button className="ad-btn" onClick={() => notify('The activity log isn’t part of this study.')}><Clock size={13} />Activity log</button><button className="ad-btn dark" onClick={() => notify('Invite drafted. Demo only, nothing is sent.')}><Plus size={13} />Invite an agent</button></Rise>
+      <Rise i={1} className="adminv2-actions"><button className="adminv2-btn" onClick={() => notify('The activity log isn’t part of this study.')}><Clock size={13} />Activity log</button><button className="adminv2-btn dark" onClick={() => notify('Invite drafted. Demo only, nothing is sent.')}><Plus size={13} />Invite an agent</button></Rise>
     </header>
-    <div className="ad-overview-top">
-      <Glass i={0} hover={false} className="ad-chart-card">
-        <div className="ad-card-head"><div><h3>Agency commission</h3><p>${sum.toLocaleString('en-US')} from {deals} deals in the last {periods[period]} months{office && ` · ${office}`}</p></div>
-          <div className="ad-card-tools"><Segmented value={period} onChange={setPeriod} options={(Object.keys(periods) as Period[]).map(p => ({ id: p, label: p }))} /><button className="ad-btn dark" onClick={() => notify('Deal form is outside this study. Nothing was recorded.')}><Plus size={13} />Record a deal</button></div></div>
+    <div className="adminv2-overview-top">
+      <Glass i={0} hover={false} className="adminv2-chart-card">
+        <div className="adminv2-card-head"><div><h3>Agency commission</h3><p>${sum.toLocaleString('en-US')} from {deals} deals in the last {periods[period]} months{office && ` · ${office}`}</p></div>
+          <div className="adminv2-card-tools"><Segmented value={period} onChange={setPeriod} options={(Object.keys(periods) as Period[]).map(p => ({ id: p, label: p }))} /><button className="adminv2-btn dark" onClick={() => notify('Deal form is outside this study. Nothing was recorded.')}><Plus size={13} />Record a deal</button></div></div>
         <BarChart data={data} />
       </Glass>
-      <Glass i={1} hover={false} className="ad-office-card">
-        <div className="ad-card-head"><div><h3>Commission by office</h3><p>Last 6 months. Click an office to filter.</p></div></div>
+      <Glass i={1} hover={false} className="adminv2-office-card">
+        <div className="adminv2-card-head"><div><h3>Commission by office</h3><p>Last 6 months. Click an office to filter.</p></div></div>
         <Donut items={offices} selected={office} onSelect={setOffice} />
-        <div className="ad-office-legend">{offices.map(o => <button key={o.name} aria-pressed={office === o.name} className={office && office !== o.name ? 'dim' : ''} onClick={() => setOffice(office === o.name ? null : o.name)}>
+        <div className="adminv2-office-legend">{offices.map(o => <button key={o.name} aria-pressed={office === o.name} className={office && office !== o.name ? 'dim' : ''} onClick={() => setOffice(office === o.name ? null : o.name)}>
           <i style={{ background: o.color }} />{o.name}<b>${(o.value / 1000).toFixed(1).replace(/\.0$/, '')}K</b></button>)}</div>
       </Glass>
     </div>
-    <div className="ad-stat-grid">
+    <div className="adminv2-stat-grid">
       <StatCard i={2} icon={Users} value={11} label="Active people" detail="5 online right now" />
       <StatCard i={3} icon={ClipboardList} value={inReview} label="Waiting for review" detail="oldest sent 6 h ago" />
       <StatCard i={4} icon={Kanban} value={49} label="Open deals" detail="worth $4.9M" />

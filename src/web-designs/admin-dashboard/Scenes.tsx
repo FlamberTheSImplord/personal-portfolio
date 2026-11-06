@@ -83,5 +83,5 @@ const scenes: Record<Scene, ReactNode> = {
 }
 
 export function SceneArt({ scene, title }: { scene: Scene; title: string }) {
-  return <svg className="ad-scene" viewBox="0 0 240 170" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`Illustration: ${title}`}>{scenes[scene]}</svg>
+  return <svg className="adminv2-scene" viewBox="0 0 240 170" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`Illustration: ${title}`}>{scenes[scene]}</svg>
 }
