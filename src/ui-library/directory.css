@@ -1,0 +1,45 @@
+/* UI Library directory. Motion is transform/opacity only; thumbnails animate only while on screen. */
+.ul-bar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:14px;margin:0 0 20px}
+.ul-bar [role=group]{background:#e8ecf2}
+.ul-search{max-width:320px;padding:10px 14px}
+.ul-tabs [role=tablist]{overflow-x:auto;scrollbar-width:none}
+.ul-tabs [role=tablist]::-webkit-scrollbar{display:none}
+.ul-tabs [role=tab]{white-space:nowrap}
+.ul-group>header{display:flex;align-items:baseline;gap:10px;margin:32px 2px 14px}
+.ul-group h2{font-size:15px;letter-spacing:-.3px}
+.ul-group>header p{font-size:11.5px;color:#8a919d}
+.ul-dir-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:18px}
+.ul-res{display:flex;flex-direction:column;padding:8px 8px 14px;border:1px solid #e6e9ee;border-radius:14px;background:#fff;transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s cubic-bezier(.2,.8,.2,1)}
+.ul-res:hover{transform:translateY(-3px);box-shadow:0 14px 30px #1b2a4a14}
+.ul-res-thumb{display:block;border-radius:9px;overflow:hidden}
+.ul-thumb{position:relative;aspect-ratio:16/10;container-type:size;overflow:hidden;background:#11131a}
+.ul-thumb img{display:block;width:100%;animation:ul-scroll 26s ease-in-out infinite alternate paused}
+.ul-thumb.on img{animation-play-state:running}
+@keyframes ul-scroll{0%,10%{transform:translateY(0)}90%,100%{transform:translateY(min(0px,calc(-100% + 100cqh)))}}
+.ul-thumb video{display:block;width:100%;height:100%;object-fit:cover;object-position:top}
+.ul-res-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:13px 6px 0}
+.ul-res-head h3{font-size:15px;font-weight:600;letter-spacing:-.3px}
+.ul-price{font-size:9.5px;font-weight:600;padding:3px 7px;border-radius:5px;background:#e9f5ee;color:#2f6b49;white-space:nowrap}
+.ul-price.paid{background:#f3efe6;color:#7a5b22}
+.ul-res>p{margin:4px 6px 0;font-size:12px;line-height:1.55;color:#7a8291}
+.ul-res .ut-tags{margin:10px 6px 0}
+.ul-res-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:auto;padding:14px 6px 0}
+.ul-use{font-size:10px;color:#8d94a0;font-family:ui-monospace,monospace}
+.ul-res-links{display:flex;align-items:center;gap:12px;font-size:10.5px;color:#5c6574}
+.ul-res-links>a:not(.ul-visit):hover{color:#2856e9}
+/* Vengeance UI InteractiveHoverButton, restyled for the directory. */
+.ul-visit{position:relative;display:inline-flex;overflow:hidden;isolation:isolate;padding:7px 14px;border:1px solid #d6dbe3;border-radius:999px;background:#fff;color:#1f2430;font-size:11px;font-weight:500}
+.ul-visit .v-hover-front{display:flex;align-items:center;gap:8px}
+.ul-visit .v-hover-dot{width:6px;height:6px;border-radius:50%;background:#1f2430;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.ul-visit .v-hover-label{transition:transform .35s ease,opacity .35s ease}
+.ul-visit .v-hover-back{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center;gap:5px;color:#fff;opacity:0;transform:translateX(18px);transition:transform .35s ease,opacity .35s ease}
+.ul-visit .v-hover-back svg{width:13px;height:13px}
+.ul-visit:is(:hover,:focus-visible) .v-hover-dot{transform:scale(36)}
+.ul-visit:is(:hover,:focus-visible) .v-hover-label{transform:translateX(36px);opacity:0}
+.ul-visit:is(:hover,:focus-visible) .v-hover-back{transform:none;opacity:1}
+.ul-empty{margin-top:34px;font-size:12px;color:#7a8291}
+.ul-empty button{border:0;background:none;color:#2856e9;font-size:12px;padding:0}
+.ul-credits a{color:#5c6574;text-decoration:underline;text-underline-offset:2px}
+.ul-studies{margin-top:6px}
+@media(max-width:580px){.ul-dir-grid{grid-template-columns:1fr}.ul-search{max-width:none}}
+@media(prefers-reduced-motion:reduce){.ul-thumb img{animation:none}.ul-res{transition:none}}
