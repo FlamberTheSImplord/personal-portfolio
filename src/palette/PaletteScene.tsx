@@ -1,136 +1,70 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
-import { colors, type PaletteFamily } from './palettes'
+import {lazy, Suspense, type CSSProperties} from 'react'
+import type {SceneId} from './palettes'
 import './palette-scenes.css'
 
-// Each scene is drawn on a fixed design canvas and scaled as a whole, so the reel's proportions survive any preview width.
-// Canvas sizes are the website crops measured in the reel (≈612×380 and ≈610×456 video pixels), doubled.
-const canvases = {
-  electric: {width: 1224, height: 760, label: 'Recreation of the Editeaze creative-app landing page from the reel'},
-  aqua: {width: 1220, height: 912, label: 'Recreation of the Globynk global-talent landing page from the reel'},
+// Every scene is drawn on a fixed design canvas (see palettes.ts) and scaled as a whole by the page.
+// Both stages show the same layout; only colours change, and they transition (see --pd-pop in palette-scenes.css).
+
+const Murmur = lazy(() => import('./scenes/Murmur'))
+const Timbre = lazy(() => import('./scenes/Timbre'))
+const Pocket = lazy(() => import('./scenes/Pocket'))
+
+const vars = {'--pd-charcoal': '#21232E', '--pd-royal': '#105BFF', '--pd-tangerine': '#FE8500', '--pd-aqua': '#74FFED', '--pd-midnight': '#171F44', '--pd-pink': '#FE81D1'} as CSSProperties
+
+export function Scene({id, accent}: {id: SceneId, accent: boolean}) {
+  const scene = id === 'editeaze' ? <Editeaze accent={accent}/> : id === 'globynk' ? <Globynk accent={accent}/>
+    : id === 'murmur' ? <Murmur accent={accent}/> : id === 'timbre' ? <Timbre accent={accent}/> : <Pocket accent={accent}/>
+  return <div className="pd-scene" style={vars}><Suspense fallback={null}>{scene}</Suspense></div>
 }
 
-const vars = {'--pd-charcoal': colors.charcoal[1], '--pd-royal': colors.royal[1], '--pd-tangerine': colors.tangerine[1], '--pd-aqua': colors.aqua[1], '--pd-midnight': colors.midnight[1], '--pd-pink': colors.pink[1]} as CSSProperties
+/* ───────────── Composition A: Editeaze (reinterpreted) ───────────── */
 
-export function PaletteScene({family, accent}: {family: PaletteFamily, accent: boolean}) {
-  const {width, height, label} = canvases[family]
-  return <ScaledCanvas width={width} height={height} label={`${label}${accent ? ', accent version' : ''}`}>
-    {family === 'electric' ? <Editeaze accent={accent}/> : <Globynk accent={accent}/>}
-  </ScaledCanvas>
-}
-
-function ScaledCanvas({width, height, label, children}: {width: number, height: number, label: string, children: ReactNode}) {
-  const frame = useRef<HTMLDivElement>(null), [scale, setScale] = useState(0)
-  useLayoutEffect(() => {
-    const el = frame.current!, update = () => setScale(el.clientWidth / width)
-    update()
-    const observer = new ResizeObserver(update)
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [width])
-  return <div ref={frame} className="pd-frame" role="img" aria-label={label} style={{aspectRatio: `${width} / ${height}`}}>
-    <div className="pd-canvas" style={{...vars, width, height, transform: `scale(${scale})`}}>{children}</div>
-  </div>
-}
-
-/* ───────────── Composition A: Editeaze ───────────── */
-
-// Bell-shaped vector path traced from the reel: off the top-left corner, flat trough, peak right of centre, exits the right edge.
-const curve = 'M-6 6 C30 420 110 674 290 674 C540 674 640 124 856 124 C1020 124 1110 340 1240 540'
-// The reel's glow hugs only the outer side of the left branch and the crest, not the whole line.
-const glowLeft = 'M-6 6 C15.6 254.4 51.4 445.2 115.6 558', glowCrest = 'M680 250 C735 176 794 124 856 124 C1020 124 1110 340 1240 540'
+// A desktop editor instead of the reel's cartoon phone: live footage, karaoke captions and a playhead on one 6s loop.
+// The brand's bezier curve draws in behind the window and a light travels along it. Pop colour = --pd-pop.
+const edCurve = 'M-20 690 C220 690 300 300 560 250 C760 212 860 520 1060 430 C1150 390 1190 230 1260 150'
+const edWords = ['Every', 'cut', 'lands', 'on', 'the', 'beat.']
+const edWave = 'M0 18' + Array.from({length: 135}, (_, i) => ` L${i * 4} ${18 - (Math.abs(Math.sin(i * .9) * 8 + Math.sin(i * .23) * 6) + 2) * (i % 27 < 3 ? .3 : 1)}`).join('') + ' L536 18' + Array.from({length: 135}, (_, i) => ` L${536 - i * 4} ${18 + (Math.abs(Math.sin((134 - i) * .9) * 8 + Math.sin((134 - i) * .23) * 6) + 2) * ((134 - i) % 27 < 3 ? .3 : 1)}`).join('') + 'Z'
+const edClips = [[0, 92, 'a'], [96, 150, 'b'], [250, 70, 'c'], [324, 118, 'a'], [446, 90, 'b']] as const
+const edCaptions = [[18, 70], [110, 54], [196, 96], [330, 62], [420, 88]] as const
 
 function Editeaze({accent}: {accent: boolean}) {
   return <div className={`pd-site pd-ed${accent ? ' is-accent' : ''}`}>
     <svg className="pd-ed-art" viewBox="0 0 1224 760" aria-hidden="true">
-      <defs>
-        <clipPath id="pd-ed-outside"><path d={`${curve} L1260 -40 L-40 -40 Z`}/></clipPath>
-        <filter id="pd-ed-haze" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="26"/></filter>
-        <linearGradient id="pd-ed-fade-left" gradientUnits="userSpaceOnUse" x1="0" y1="330" x2="0" y2="560"><stop offset="0" className="on"/><stop offset="1" className="off"/></linearGradient>
-        <linearGradient id="pd-ed-fade-crest" gradientUnits="userSpaceOnUse" x1="680" y1="0" x2="800" y2="0"><stop offset="0" className="off"/><stop offset="1" className="on"/></linearGradient>
-        <filter id="pd-ed-soft" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="4"/></filter>
-      </defs>
-      <g clipPath="url(#pd-ed-outside)"><path d={glowLeft} className="pd-ed-haze" stroke="url(#pd-ed-fade-left)" filter="url(#pd-ed-haze)"/><path d={glowCrest} className="pd-ed-haze crest" stroke="url(#pd-ed-fade-crest)" filter="url(#pd-ed-haze)"/></g>
-      <path d={curve} className="pd-ed-halo" filter="url(#pd-ed-soft)"/>
-      <path d={curve} className="pd-ed-line"/>
-      <g className="pd-ed-handles">
-        <line x1="0" x2="1224" y1="674" y2="674" className="dash"/>
-        <line x1="64" x2="456" y1="674" y2="674"/>
-        <line x1="1170" x2="1224" y1="674" y2="674"/>
-        <rect x="58" y="668" width="12" height="12"/><rect x="450" y="668" width="12" height="12"/><rect x="1164" y="668" width="12" height="12"/>
-        <circle cx="234" cy="674" r="5"/><circle cx="320" cy="674" r="5"/>
-      </g>
+      <defs><radialGradient id="pd-ed-pool"><stop offset="0" stopColor="#105BFF" stopOpacity=".32"/><stop offset="1" stopColor="#105BFF" stopOpacity="0"/></radialGradient></defs>
+      <ellipse cx="900" cy="420" rx="520" ry="330" fill="url(#pd-ed-pool)"/>
+      <g className="pd-ed-curve">{[26, 12, 2.5].map(w => <path key={w} d={edCurve} pathLength={1} style={{strokeWidth: w}}/>)}</g>
     </svg>
-    <nav className="pd-ed-nav">
-      <span className="pd-ed-logo"><svg viewBox="0 0 18 20"><defs><linearGradient id="pd-ed-mark" x2="1" y2="1"><stop offset="0" className="a"/><stop offset="1" className="b"/></linearGradient></defs><path d="M2 1.5 16 10 2 18.5Z" fill="url(#pd-ed-mark)"/><path d="M2 1.5 9 10 2 18.5Z" fill="#fff" opacity=".28"/></svg>editease</span>
-      <span className="pd-ed-link" style={{left: 490}}>Home</span><span className="pd-ed-link" style={{left: 560}}>Features</span><span className="pd-ed-link" style={{left: 644}}>Pricing</span><span className="pd-ed-link" style={{left: 722}}>Support</span>
-      <span className="pd-ed-link" style={{left: 1046}}>Log in</span>
-      <span className="pd-ed-cta">Get started</span>
+    <i className="pd-ed-spark" aria-hidden="true"/>
+    <nav className="pd-ed-nav pd-fade">
+      <span className="pd-ed-logo"><svg viewBox="0 0 18 20"><path d="M2 1.5 16 10 2 18.5Z"/></svg>editeaze</span>
+      <span className="pd-ed-links"><span>Product</span><span>Templates</span><span>Pricing</span></span>
+      <span className="pd-ed-login">Log in</span><span className="pd-ed-cta">Get started</span>
     </nav>
-    <div className="pd-ed-title pd-ed-left"><span>Transform</span><span className="indent">your</span><span className="indent">content</span></div>
-    <p className="pd-ed-copy">Elevate your creations with ease. Download now and unleash your artistic vision with stunning content!</p>
-    <div className="pd-ed-stores">
-      <span><svg viewBox="0 0 14 16"><path d="M10.2 8.6c0-1.7 1.4-2.5 1.5-2.6-.8-1.2-2.1-1.3-2.5-1.4-1.1-.1-2.1.6-2.6.6s-1.4-.6-2.3-.6C3.1 4.7 2 5.4 1.4 6.5c-1.3 2.2-.3 5.5 1 7.3.6.9 1.3 1.9 2.3 1.8.9 0 1.3-.6 2.4-.6s1.4.6 2.4.6 1.6-.9 2.2-1.8c.7-1 1-2 1-2.1 0 0-1.9-.7-1.9-3.1ZM8.4 3.4c.5-.6.9-1.5.8-2.4-.8 0-1.7.5-2.3 1.1-.5.6-.9 1.4-.8 2.3.9.1 1.7-.4 2.3-1Z"/></svg><small>Download on the</small>App Store</span>
-      <span><svg viewBox="0 0 14 16"><path d="M1.5 1 12.5 8 1.5 15Z"/></svg><small>Get it on</small>Google Play</span>
+    <div className="pd-ed-head pd-rise" style={{'--e': '.1s'} as CSSProperties}><span>Edit at the</span><span>speed of</span><span className="blue">sound.</span></div>
+    <p className="pd-ed-copy pd-rise" style={{'--e': '.2s'} as CSSProperties}>Captions, beat-synced cuts and colour in one pass. Drop in a clip and Editeaze finds the rhythm.</p>
+    <div className="pd-ed-actions pd-rise" style={{'--e': '.28s'} as CSSProperties}><span className="pd-ed-primary">Start editing</span><span className="pd-ed-ghost"><i/>Watch the film</span></div>
+    <div className="pd-ed-proof pd-rise" style={{'--e': '.34s'} as CSSProperties}><b>4.9</b> from 12,000 creators</div>
+
+    <div className="pd-ed-window pd-rise" style={{'--e': '.18s'} as CSSProperties}>
+      <div className="pd-ed-bar"><span className="dots"><i/><i/><i/></span><span className="file">launch-film.edz</span><span className="export">Export</span></div>
+      <div className="pd-ed-footage">
+        <i className="blob a"/><i className="blob b"/><i className="blob c"/><i className="ridge"/>
+        <span className="rec"><i/>REC 00:12:04</span>
+        <span className="pd-ed-caption">{edWords.map((w, i) => <span key={w} style={{animationDelay: `${.35 + i * .62}s`}}>{w}</span>)}</span>
+      </div>
+      <div className="pd-ed-transport"><span className="play"/><b>00:12:04</b><small>/ 00:48:00</small><span className="zoom"><i/></span></div>
+      <div className="pd-ed-timeline">
+        <div className="ruler">{Array.from({length: 11}, (_, i) => <span key={i} style={{left: i * 54}}>{`0:${String(i * 5).padStart(2, '0')}`}</span>)}</div>
+        <div className="track v">{edClips.map(([x, w, t]) => <i key={x} className={t} style={{left: x, width: w}}/>)}</div>
+        <svg className="track a" viewBox="0 0 536 36" preserveAspectRatio="none"><path d={edWave}/></svg>
+        <div className="track c">{edCaptions.map(([x, w], i) => <i key={x} className={i === 2 ? 'on' : ''} style={{left: x, width: w}}/>)}</div>
+        <svg className="track k" viewBox="0 0 536 40" preserveAspectRatio="none"><path d="M0 34 C90 34 120 6 210 6 S330 34 400 22 S500 8 536 8"/><circle cx="210" cy="6" r="4"/><circle cx="400" cy="22" r="4"/></svg>
+        <span className="pd-ed-playhead"/>
+      </div>
     </div>
-    {accent && <EditorPhone/>}
-    <div className="pd-ed-title pd-ed-right">
-      <span>With</span>
-      <span className="pd-ed-selected">Editeaze<i className="tl"/><i className="tr"/><i className="bl"/><i className="br"/></span>
-      <span className="end">App</span>
-    </div>
+    <div className="pd-ed-chip captions pd-rise" style={{'--e': '.45s'} as CSSProperties}><i/><div><b>Auto captions</b><small>EN · ES · JA</small></div></div>
+    <div className="pd-ed-chip render pd-rise" style={{'--e': '.55s'} as CSSProperties}><div><b>Exporting 4K</b><span className="track"><i/></span></div></div>
   </div>
-}
-
-// Only present in the tangerine state: the reel drops this phone editor and its floating panels onto the same layout.
-function EditorPhone() {
-  return <>
-    <div className="pd-phone">
-      <div className="pd-phone-status"><b>9:41</b><i className="island"/><span className="signal"><i/><i/><i/><i/></span><span className="battery"/></div>
-      <div className="pd-phone-media">
-        <div className="pd-media-head"><span className="back">‹</span><div><b>Presentation of new Feature</b><small>1080p • 29.93 FPS</small></div><span className="icon cube"/><span className="icon down">⤓</span></div>
-        <svg className="pd-media-people" viewBox="22 18 200 132">
-          <path d="M36 150c2-34 16-58 46-64l26 4c22 10 30 32 34 60Z" fill="#ff8a1c"/>
-          <path d="M120 150c6-30 18-46 38-50l22 2c22 8 34 26 40 48Z" fill="#ff6fae"/><path d="M196 150c0-18-8-30-16-40l12-4c16 8 24 24 26 44Z" fill="#ff9a2c"/>
-          <ellipse cx="96" cy="58" rx="20" ry="24" fill="#5a3324"/><path d="M76 50c0-20 14-30 26-28 12 2 18 10 16 22-6-8-16-10-26-8-8 2-12 8-16 14Z" fill="#b6e34a"/>
-          <ellipse cx="146" cy="72" rx="18" ry="22" fill="#4a2a1f"/><path d="M128 66c-2-18 10-28 22-26 12 2 16 10 14 20-6-8-14-8-22-6-6 2-10 6-14 12Z" fill="#ff8fc8"/>
-          <path d="M62 150c10-20 40-26 70-20l40 6c-10 8-30 14-50 14Z" fill="#f27d1f" opacity=".9"/>
-        </svg>
-        <div className="pd-media-input"/>
-      </div>
-      <div className="pd-phone-controls"><span className="play"/><b>00:31</b><small>/02:56</small><span className="ctl">↶</span><span className="ctl">↷</span><span className="ctl">⤢</span></div>
-      <div className="pd-tracks">
-        {[0, 1, 2, 3].map(row => <i key={row} className={`row-icon r${row}`}/>)}
-        <span className="clip text" style={{left: 42, width: 80}}>Some text...<small>7s</small></span><span className="clip text" style={{left: 164, width: 92}}>Some text some...</span>
-        <span className="clip mod orange" style={{left: 60, width: 44}}>Modify<small>8s</small></span><span className="clip mod red" style={{left: 126, width: 90}}>Modify<small>19s</small></span>
-        <svg className="clip wave" viewBox="0 0 212 32" preserveAspectRatio="none"><path d={waveform}/></svg>
-        <span className="clip film">{Array.from({length: 7}, (_, i) => <i key={i}/>)}</span>
-        <span className="playhead"/>
-      </div>
-      <div className="pd-ruler">{['10s', '20s', '30s', '40s', '50s'].map(t => <span key={t}>{t}</span>)}</div>
-      <div className="pd-phone-tools"><span>✂</span><span className="half"/><span>⟋</span><span className="cc">CC</span><span className="layers"/><span className="wheel"/></div>
-      <i className="pd-phone-home"/>
-    </div>
-    <div className="pd-float pd-subtitles"><i className="dot"/><div><small>CC/Subtitles</small>I am very pleased with our...</div><i className="square"/></div>
-    <div className="pd-float pd-strip">
-      <Portrait flip={false}/><Portrait flip/>
-      <span className="pin"/>
-    </div>
-    <div className="pd-float pd-add"><i>+</i>Add new</div>
-    <div className="pd-float pd-swatches">{['#7c4dff', '#2f6bff', '#22c7f0', '#22c55e', '#ff3d6e', '#ff7a1a', '#ffd23f', '#d9d9de'].map(c => <i key={c} style={{background: c}}/>)}</div>
-  </>
-}
-
-const waveform = 'M0 32' + Array.from({length: 53}, (_, i) => ` L${i * 4} ${16 - Math.abs(Math.sin(i * 1.7) * 9 + Math.sin(i * .45) * 5)}`).join('') + ' L212 32Z'
-
-function Portrait({flip}: {flip: boolean}) {
-  return <svg className="portrait" viewBox="0 0 120 103" style={flip ? {transform: 'scaleX(-1)'} : undefined}>
-    <path d="M10 103c4-30 18-44 40-48h22c24 6 36 22 40 48Z" fill="#f3efe8"/>
-    <path d="M30 103c4-18 14-28 30-30 16 2 28 12 32 30Z" fill="#1f5d4d"/>
-    <path d="M32 46c-2-30 16-42 32-40 18 2 30 16 26 40l-6 26H40Z" fill="#7a4a2c"/>
-    <ellipse cx="60" cy="48" rx="21" ry="25" fill="#e9b493"/>
-    <circle cx="51" cy="46" r="8" fill="#ff3a4c" opacity=".85"/><circle cx="70" cy="46" r="8" fill="#ff3a4c" opacity=".85"/>
-    <path d="M38 30c6-14 30-18 44-4-10-4-26-6-44 4Z" fill="#5a331e"/>
-  </svg>
 }
 
 /* ───────────── Composition B: Globynk ───────────── */
@@ -142,23 +76,21 @@ function Globynk({accent}: {accent: boolean}) {
         <radialGradient id="pd-gl-core" cx=".52" cy=".55" r=".55"><stop offset="0" stopColor="#b4ffe6" stopOpacity=".65"/><stop offset=".55" stopColor="#6cf0d4" stopOpacity=".22"/><stop offset="1" stopColor="#5fe6d6" stopOpacity="0"/></radialGradient>
         <linearGradient id="pd-gl-skin-l" x1="1" y1="0" x2="0" y2="1"><stop offset="0" stopColor="#2f6f7c"/><stop offset=".45" stopColor="#163c4c"/><stop offset="1" stopColor="#0a1f2c"/></linearGradient>
         <linearGradient id="pd-gl-skin-r" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stopColor="#2f6f7c"/><stop offset=".4" stopColor="#173a4a"/><stop offset="1" stopColor="#0c2130"/></linearGradient>
-        <filter id="pd-gl-bloom" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="5"/></filter>
-        <filter id="pd-gl-rim" x="-10%" y="-10%" width="120%" height="120%"><feGaussianBlur stdDeviation="2.5"/></filter>
       </defs>
       <circle cx={globe.cx} cy={globe.cy} r={globe.r + 26} fill="url(#pd-gl-core)"/>
       <path d={globe.back} className="pd-gl-mesh back"/>
       <path d={globe.front} className="pd-gl-mesh"/>
       <path d={globe.dots} className="pd-gl-dots"/>
       <g className="pd-gl-hand">
-        <path d={leftHand} fill="url(#pd-gl-skin-l)"/><path d={leftHand} className="rim" filter="url(#pd-gl-rim)"/>
-        <path d={rightHand} fill="url(#pd-gl-skin-r)"/><path d={rightHand} className="rim" filter="url(#pd-gl-rim)"/>
+        <path d={leftHand} fill="url(#pd-gl-skin-l)"/><path d={leftHand} className="rim"/>
+        <path d={rightHand} fill="url(#pd-gl-skin-r)"/><path d={rightHand} className="rim"/>
       </g>
       <g className="pd-gl-routes">
-        {routes.map(d => <path key={d} d={d} className="glow" filter="url(#pd-gl-bloom)"/>)}
-        {routes.map(d => <path key={d} d={d}/>)}
+        {routes.map(r => <path key={r} d={r} className="glow"/>)}
+        {routes.map(r => <path key={r} d={r}/>)}
       </g>
       <g className="pd-gl-nodes">
-        {globe.bright.map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="6" className="glow" filter="url(#pd-gl-bloom)"/>)}
+        {globe.bright.map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="8" className="glow"/>)}
         {globe.bright.map(([x, y]) => <circle key={`${x}${y}`} cx={x} cy={y} r="2.6"/>)}
       </g>
     </svg>
@@ -170,7 +102,7 @@ function Globynk({accent}: {accent: boolean}) {
     <div className="pd-gl-hero">
       <div className="pd-gl-title">Hire Top Global Talent<br/>Without Borders</div>
       <p>Build and manage international teams with AI-powered hiring, automated<br/>compliance, and seamless global payroll from a single platform.</p>
-      {accent && <span className="pd-gl-cta">Start Hiring Today</span>}
+      <span className="pd-gl-cta">Start Hiring Today</span>
     </div>
     <div className="pd-gl-card" style={{left: 104, top: 514, width: 298}}><b>AI Candidate Matching</b>Discover highly qualified professionals through intelligent matching based on skills and experience worldwide today.</div>
     <div className="pd-gl-card" style={{left: 828, top: 566, width: 290}}><b>Global Talent Access</b>Connect with exceptional talent worldwide while expanding hiring opportunities across multiple markets.</div>
@@ -214,7 +146,15 @@ const globe = (() => {
   })
   const project = ([x, y]: number[]) => `${(cx + x * r).toFixed(1)} ${(cy - y * r).toFixed(1)}`
   const pairs = new Set<string>()
-  pts.forEach((p, i) => pts.map((q, j) => [j, (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 + (p[2] - q[2]) ** 2]).filter(([j]) => j !== i).sort((a, b) => a[1] - b[1]).slice(0, 3).forEach(([j]) => pairs.add(i < j ? `${i}-${j}` : `${j}-${i}`)))
+  pts.forEach((p, i) => {
+    const best: [number, number][] = [[-1, Infinity], [-1, Infinity], [-1, Infinity]]
+    for (let j = 0; j < count; j++) {
+      if (j === i) continue
+      const q = pts[j], dist = (p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2 + (p[2] - q[2]) ** 2
+      if (dist < best[2][1]) { best[2] = [j, dist]; best.sort((a, b) => a[1] - b[1]) }
+    }
+    best.forEach(([j]) => pairs.add(i < j ? `${i}-${j}` : `${j}-${i}`))
+  })
   let front = '', back = '', dots = ''
   pairs.forEach(key => {
     const [a, b] = key.split('-').map(Number), seg = `M${project(pts[a])}L${project(pts[b])}`
