@@ -1,6 +1,7 @@
 /* Colour palette page. Motion is transform/opacity/colour only; every change eases instead of swapping. */
 .pp-page{--pp-ease:cubic-bezier(.2,.8,.2,1)}
 .pp-sources{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.pp-anchor{scroll-margin-top:80px}
 
 /* Picker */
 .pp-picker{position:relative;display:grid;grid-template-columns:2fr 3fr;gap:18px}

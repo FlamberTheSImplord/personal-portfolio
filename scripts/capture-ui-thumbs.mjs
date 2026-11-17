@@ -1,5 +1,6 @@
 // Captures UI Library thumbnails from each resource's real website with headless Brave/Chrome over CDP.
-// Usage: node scripts/capture-ui-thumbs.mjs [id ...]   (needs ffmpeg + ImageMagick; dev server running for Stageshow)
+// Usage: node --experimental-strip-types scripts/capture-ui-thumbs.mjs [id ...]   (needs ffmpeg + ImageMagick; dev server running for Stageshow)
+// Sites come from src/ui-library/resources.ts. Entries marked `still` get only the tall still; the rest also get a video loop.
 // Stills render best in software mode; motion loops need the GPU for real frame rates:
 //   ONLY=still node scripts/capture-ui-thumbs.mjs && GPU=1 ONLY=video node scripts/capture-ui-thumbs.mjs
 // Output: public/ui-library/directory/<id>.mp4 + <id>-poster.webp (the site's own hero motion, a cursor pass, then a scroll),
@@ -8,18 +9,14 @@ import {spawn, execFileSync} from 'node:child_process'
 import {mkdirSync, mkdtempSync, rmSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
+import {resources} from '../src/ui-library/resources.ts'
 
 const browser = process.env.BROWSER || '/opt/brave.com/brave/brave'
 const out = 'public/ui-library/directory', notes = join(tmpdir(), 'ui-thumb-notes')
-const sites = {
-  smoothui: 'https://smoothui.dev/', boardui: 'https://www.boardui.com/', vengeance: 'https://www.vengenceui.com/',
-  animate: 'https://animate-ui.com/', uiverse: 'https://uiverse.io/', forge: 'https://forgeui.in/', uilora: 'https://www.uilora.com/',
-  '21st': 'https://21st.dev/', reactbits: 'https://reactbits.dev/', magicui: 'https://magicui.design/', threeui: 'https://threeui.com/',
-  mobbin: 'https://mobbin.com/', mesh3d: 'https://mesh3d.gallery/', recent: 'https://recent.design/', collectui: 'https://collectui.com/',
-  awwwards: 'https://www.awwwards.com/', stageshow: 'http://localhost:5173/vendor/stageshow/playground/index.html?example=hero-demo',
-}
-// uiverse.io blocks headless browsers (Cloudflare), so it keeps a still from a normal browser session.
-const motion = new Set(Object.keys(sites).filter(id => id !== 'uiverse'))
+const local = {stageshow: 'http://localhost:5173/vendor/stageshow/playground/index.html?example=hero-demo'}
+const sites = Object.fromEntries(resources.map(r => [r.id, local[r.id] ?? r.url]))
+// uiverse.io, ui8.net and deck.gallery block headless browsers and horizonx.so renders blank, so their stills come from a normal browser session.
+const motion = new Set(resources.filter(r => !r.still).map(r => r.id))
 const W = 1440, H = 900, SLICES = 4
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))

@@ -1,0 +1,34 @@
+/* Shared filter UI. Colours meet WCAG AA (4.5:1) on white. */
+.fx-trigger{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid #d5dae2;border-radius:999px;background:#fff;color:#2b3240;font:inherit;font-size:12px;cursor:pointer;transition:border-color .2s,background .2s}
+.fx-trigger[data-hovered]{border-color:#9aa3b2}
+.fx-trigger[data-focus-visible]{outline:2px solid #2856e9;outline-offset:2px}
+.fx-trigger.on{border-color:#1f2430;background:#1f2430;color:#fff}
+.fx-trigger svg{opacity:.7}
+.fx-badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:9px;background:#fff;color:#1f2430;font-size:10.5px;font-weight:700}
+.fx-popover{min-width:230px;max-width:min(300px,calc(100vw - 32px));border:1px solid #e1e5eb;border-radius:12px;background:#fff;box-shadow:0 16px 40px #1b2a4a24;overflow:hidden}
+.fx-popover[data-entering]{animation:fx-in .16s cubic-bezier(.2,.8,.2,1)}
+@keyframes fx-in{from{opacity:0;transform:translateY(-4px)}}
+.fx-dialog{outline:none;display:flex;flex-direction:column}
+.fx-search{border-bottom:1px solid #eceff3}
+.fx-search input{width:100%;border:0;outline:none;padding:11px 13px;font:inherit;font-size:12.5px;color:#1f2430;background:transparent}
+.fx-search input::placeholder{color:#6b7280}
+.fx-list{max-height:290px;overflow:auto;padding:5px;outline:none}
+.fx-option{display:flex;align-items:center;gap:9px;padding:7px 8px;border-radius:7px;font-size:12.5px;color:#2b3240;cursor:pointer;outline:none}
+.fx-option[data-focused],.fx-option[data-hovered]{background:#f1f4f8}
+.fx-check{display:grid;place-items:center;width:15px;height:15px;border:1px solid #c3cad5;border-radius:4px;color:#fff;flex:none}
+.fx-option[data-selected] .fx-check{background:#2856e9;border-color:#2856e9}
+.fx-label{flex:1;min-width:0}
+.fx-count{font-size:11px;color:#5f6775;font-variant-numeric:tabular-nums}
+.fx-empty{padding:12px;font-size:12px;color:#5f6775}
+.fx-clear{border:0;border-top:1px solid #eceff3;background:#fafbfc;padding:9px;font:inherit;font-size:12px;color:#2856e9;cursor:pointer}
+.fx-clear:hover{background:#f1f4f8}
+.fx-active{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:12px 0 0}
+.fx-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 9px 0 10px;border:1px solid #c9d6fb;border-radius:999px;background:#eef3ff;color:#1d3fae;font:inherit;font-size:12px;cursor:pointer}
+.fx-chip:hover{background:#e1e9ff;border-color:#9fb6f6}
+.fx-chip:focus-visible,.fx-clear-all:focus-visible{outline:2px solid #2856e9;outline-offset:2px}
+.fx-chip-facet{font-size:10.5px;color:#3d5bb8;text-transform:uppercase;letter-spacing:.4px}
+.fx-clear-all{border:0;background:none;padding:0 4px;font:inherit;font-size:12px;color:#4b5363;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.fx-mark{background:#fde68a;color:inherit;border-radius:3px;padding:0 1px;box-decoration-break:clone}
+.fx-kbd{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border:1px solid #d5dae2;border-bottom-width:2px;border-radius:5px;background:#f6f7f9;color:#4b5363;font:11px/1 ui-monospace,monospace;flex:none}
+@media(hover:none){.fx-kbd{display:none}}
+@media(prefers-reduced-motion:reduce){.fx-popover[data-entering]{animation:none}.fx-trigger{transition:none}}

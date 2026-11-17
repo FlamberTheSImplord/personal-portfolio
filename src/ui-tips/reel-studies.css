@@ -17,3 +17,22 @@
 
 /* Fitts: three misses, one generous target. */
 .rs-sketch>.rs-fitts-examples{padding:16px 22px;gap:12px;justify-content:center}.rs-fitts-example>span{display:block;font-size:9px;color:#9b7f70;margin-bottom:6px}.rs-fitts-example>div{height:27px;position:relative;display:flex;align-items:center}.rs-fitts-example i{font-size:22px;font-style:normal;color:#434b40;line-height:1}.rs-fitts-tiny>span{font-size:6px;text-decoration:underline;color:#7e8974}.rs-fitts-tiny>i{position:absolute;left:33px;top:9px}.rs-fitts-distant{justify-content:space-between}.rs-fitts-distant>span:last-child{font-size:7px;background:#e5e8df;border:1px solid #cdd4c5;padding:5px 8px;border-radius:3px}.rs-fitts-travel{flex:1;border-top:1px dashed #bca38f;margin:0 12px}.rs-fitts-crowded{gap:2px}.rs-fitts-crowded>span{font-size:7px;border:1px solid #cfd3c7;padding:5px 6px;border-radius:2px}.rs-fitts-crowded>span:nth-child(3){color:#ae7059}.rs-fitts-crowded>i{position:absolute;left:58px;top:15px}.rs-sketch>.rs-fitts-big{align-items:center;justify-content:center;padding:25px}.rs-fitts-big-button{display:grid;place-items:center;width:100%;min-height:100px;border-radius:12px;background:#485d45;color:#fff;font-size:clamp(18px,2.2vw,30px);font-weight:600;letter-spacing:-.5px;box-shadow:0 3px 0 #34472f}.rs-kind-fitts .rs-sketch-mark{display:none}@media(max-width:700px){.rs-sketch>.rs-fitts-examples{padding:12px;gap:8px}.rs-fitts-example>span{font-size:8px;margin-bottom:3px}.rs-fitts-example>div{height:23px}.rs-fitts-crowded>span{padding:4px 3px;font-size:6px}.rs-fitts-travel{margin-inline:5px}.rs-sketch>.rs-fitts-big{padding:14px}.rs-fitts-big-button{min-height:95px;border-radius:9px;font-size:18px}.rs-comparison .rs-kind-fitts{aspect-ratio:.85}}
+
+/* Tag chips: readable size, and a filled state when the tag is filtered on or matched. */
+.ut-tags button,.ut-tags>span{font-size:11px;padding:5px 9px;color:#4f5d55}
+.ut-tags button{cursor:pointer}
+.ut-tags button[aria-pressed=true]{background:#1f2430;border-color:#1f2430;color:#fff}
+
+/* Search, sections and filters (shared filter styles: src/filters/filters.css). */
+.ut-search .fx-kbd{margin-left:auto}
+.ut-try{display:flex;align-items:center;gap:8px;margin:-16px 0 22px;font-size:12px;color:#4f5d55}
+.ut-try .ut-tags{margin:0}
+.ut-tabs{overflow-x:clip;margin:0 0 4px}
+.ut-tabs [role=tablist]{overflow-x:auto;scrollbar-width:none}
+.ut-tabs [role=tablist]::-webkit-scrollbar{display:none}
+.ut-tabs [role=tab]{white-space:nowrap}
+.ut-filter-bar{display:flex;align-items:center;gap:8px;margin:14px 0 0}
+.ut-count{margin-left:auto;font-size:12px;color:#55625a;font-variant-numeric:tabular-nums}
+.ut-page .fx-active{margin-bottom:4px}
+.ut-page .rs-gallery,.ut-page .ut-study-grid,.ut-page .hs-collection{margin-top:26px}
+.ut-idea{border:0;background:none;padding:0;font:inherit;font-weight:600;color:#2e5141;text-decoration:underline;text-underline-offset:2px;cursor:pointer}

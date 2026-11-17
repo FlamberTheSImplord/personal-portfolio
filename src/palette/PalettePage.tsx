@@ -4,6 +4,7 @@ import {SegmentedControl, SegmentedControlItem} from '../../vendor/boardui/compo
 import {Switch} from '../../vendor/boardui/components/base/switch/switch'
 import {BrowserFrame} from '../web-designs/BrowserFrame'
 import {Scene} from './PaletteScene'
+import {Shelf} from './Shelf'
 import {references, shares, studies, type PaletteStudy, type ReferenceId, type Stage} from './palettes'
 import {contrast, grade, inkOn, luminance} from './color'
 import '../ui-library/boardui/components.css'
@@ -19,7 +20,7 @@ const notes: Record<ReferenceId, string> = {
 
 export default function PalettePage() {
   const [index, setIndex] = useState(0), [stage, setStage] = useState<Stage>('two'), [replay, setReplay] = useState(0), [tryOn, setTryOn] = useState(false)
-  const touched = useRef(false), study = studies[index]
+  const touched = useRef(false), studiesRef = useRef<HTMLDivElement>(null), study = studies[index]
   const touch = () => { touched.current = true }
   const select = (i: number) => { touch(); setIndex((i + studies.length) % studies.length) }
   const toggle = (next: Stage) => { touch(); setStage(next) }
@@ -47,7 +48,9 @@ export default function PalettePage() {
       <div className="pp-sources">{(Object.keys(references) as ReferenceId[]).map(id => <a key={id} className="source" href={references[id].url} target="_blank" rel="noreferrer">Reference · {references[id].creator}<ArrowUpRight size={14}/></a>)}</div>
     </div>
 
-    <Picker index={index} stage={stage} onSelect={select}/>
+    <Shelf onStudy={id => { select(studies.findIndex(s => s.id === id)); studiesRef.current?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}) }}/>
+
+    <div ref={studiesRef} className="pp-anchor"><Picker index={index} stage={stage} onSelect={select}/></div>
 
     <div className="pp-toolbar">
       <span className="pp-live"><i/>Live <b>{pad(index + 1)} / {pad(studies.length)}</b>
