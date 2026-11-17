@@ -20,7 +20,7 @@ const docs: Omit<PageDoc, 'body'>[] = [
   {path: '/palettes/', name: 'Colour palette', title: 'Colour palettes — Nik Danish', description: `A shelf of ${combos.length} colour combos sorted by mood, plus five website palette studies.`},
   {path: '/playground/', name: 'Playground', title: 'Playground — Nik Danish', description: 'Mix a colour palette, a style, a motion and an icon set from the UI Library on one sample site.'},
   {path: '/alignment/', name: 'Text alignment', title: 'Text alignment — Nik Danish', description: 'A product-card study in alignment, grouping and a clearer reading path.'},
-  {path: '/web-designs/', name: 'Web designs', title: 'Web designs — Nik Danish', description: 'Dashboard and website recreations from design reels, shown in browser windows.'},
+  {path: '/web-designs/', name: 'Web designs', title: 'Web designs — Nik Danish', description: 'Dashboard and website recreations from design reels, shown in browser windows, including a working budget dashboard.'},
   {path: '/ui-tips/', name: 'UI Designs and Tips', title: 'UI design notes — Nik Danish', description: 'Searchable UI tips, UX laws, hero layout studies and before/after form and paywall studies.'},
   {path: '/ui-library/', name: 'UI Library', title: 'UI Library — Nik Danish', description: `${resources.length} UI resources in ${categories.length} categories: animated components, component kits, CSS snippets, 3D, specialty tools, inspiration, colour tools and design beyond UI.`},
 ]
@@ -31,7 +31,7 @@ const bodies: Record<string, () => string> = {
   '/playground/': () => `<p>Pick a palette, then a style, motion and icon set sampled from UI Library entries. Look-alikes are labelled and link to their library.</p>`
     + list(playPresets.map(p => `${esc(p.name)} (${p.kind}, from ${esc(resources.find(r => r.id === p.library)?.name ?? p.library)})`)),
   '/alignment/': () => `<p>Switch between centered and left-aligned product-card compositions to compare how the eye reads them.</p>`,
-  '/web-designs/': () => list(['Fluento · Dashboard V15 and Word library', 'Ember · Projects dashboard', 'Code XR · Admin Dashboard V2 (overview, finance, moderation, announcements)'].map(esc)),
+  '/web-designs/': () => list(['Fluento · Dashboard V15 and Word library', 'Ember · Projects dashboard', 'Code XR · Admin Dashboard V2 (overview, finance, moderation, announcements)', 'Fintrack · working budget dashboard (drag-and-drop budget board, transactions, goals, summary), after yasrinoori'].map(esc)),
   '/ui-tips/': () => reelStudies.map(r => `<h2>${esc(r.title)}</h2><p>Reference: ${link(r.url, r.author)}</p>${list(r.tips.map(t => `${esc(t.title)}: ${esc(t.do)}`))}`).join('')
     + `<h2>Hero studies</h2>${list(heroStudies.map(h => `${esc(h.name)}: ${esc(h.subtitle)}`))}`,
   '/ui-library/': () => categories.map(c => `<h2>${esc(c.name)}</h2><p>${esc(c.line)}</p>${list(resources.filter(r => r.category === c.id).map(r =>

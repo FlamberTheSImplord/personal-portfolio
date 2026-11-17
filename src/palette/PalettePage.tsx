@@ -5,7 +5,8 @@ import {Switch} from '../../vendor/boardui/components/base/switch/switch'
 import {BrowserFrame} from '../web-designs/BrowserFrame'
 import {Scene} from './PaletteScene'
 import {Shelf} from './Shelf'
-import {references, shares, studies, type PaletteStudy, type ReferenceId, type Stage} from './palettes'
+import {references, shares, studies, type PaletteStudy, type ReferenceId, type Stage, type Swatch} from './palettes'
+import type {ShelfCombo} from './combos'
 import {contrast, grade, inkOn, luminance} from './color'
 import '../ui-library/boardui/components.css'
 import './palette-page.css'
@@ -19,10 +20,10 @@ const notes: Record<ReferenceId, string> = {
 }
 
 export default function PalettePage() {
-  const [index, setIndex] = useState(0), [stage, setStage] = useState<Stage>('two'), [replay, setReplay] = useState(0), [tryOn, setTryOn] = useState(false)
+  const [index, setIndex] = useState(0), [stage, setStage] = useState<Stage>('two'), [replay, setReplay] = useState(0), [tryOn, setTryOn] = useState(false), [tried, setTried] = useState<ShelfCombo | null>(null)
   const touched = useRef(false), studiesRef = useRef<HTMLDivElement>(null), study = studies[index]
   const touch = () => { touched.current = true }
-  const select = (i: number) => { touch(); setIndex((i + studies.length) % studies.length) }
+  const select = (i: number) => { touch(); setTried(null); setIndex((i + studies.length) % studies.length) }
   const toggle = (next: Stage) => { touch(); setStage(next) }
 
   // First visit: show the compact version, then let the accent arrive on its own.
@@ -39,7 +40,8 @@ export default function PalettePage() {
     return () => removeEventListener('keydown', onKey)
   }, [])
 
-  useTryOn(tryOn, study, stage)
+  // Try on portfolio follows the last thing picked: a shelf combo, or else the current site study.
+  useTryOn(tryOn, tried ? tried.colors : study.colors, tried ? tried.colors.length > 2 : stage === 'three')
   const group = studies.filter(s => s.reference === study.reference)
 
   return <div className="page pp-page">
@@ -48,7 +50,7 @@ export default function PalettePage() {
       <div className="pp-sources">{(Object.keys(references) as ReferenceId[]).map(id => <a key={id} className="source" href={references[id].url} target="_blank" rel="noreferrer">Reference · {references[id].creator}<ArrowUpRight size={14}/></a>)}</div>
     </div>
 
-    <Shelf onStudy={id => { select(studies.findIndex(s => s.id === id)); studiesRef.current?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}) }}/>
+    <Shelf tried={tried?.id} onTry={c => { setTried(c); setTryOn(true) }} onStudy={id => { select(studies.findIndex(s => s.id === id)); studiesRef.current?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}) }}/>
 
     <div ref={studiesRef} className="pp-anchor"><Picker index={index} stage={stage} onSelect={select}/></div>
 
@@ -169,7 +171,7 @@ function Details({study, stage}: {study: PaletteStudy, stage: Stage}) {
 
 /* ── Try on portfolio: recolours the app shell with the current palette ── */
 
-function useTryOn(on: boolean, study: PaletteStudy, stage: Stage) {
+function useTryOn(on: boolean, colors: readonly Swatch[], full: boolean) {
   useEffect(() => {
     document.body.classList.add('pp-shell')
     return () => { document.body.classList.remove('pp-shell', 'pp-try') }
@@ -177,11 +179,11 @@ function useTryOn(on: boolean, study: PaletteStudy, stage: Stage) {
   useEffect(() => {
     const body = document.body
     if (!on) { body.classList.remove('pp-try'); return }
-    const [base, support, accent] = study.colors
+    const [base, support] = colors, accent = colors[2] ?? support
     const dark = luminance(base.hex) < luminance(support.hex) ? base.hex : support.hex, light = dark === base.hex ? support.hex : base.hex
-    const pop = stage === 'three' ? accent.hex : light, ink = inkOn(dark)
+    const pop = full ? accent.hex : light, ink = inkOn(dark)
     const vars = {'--tp-dark': dark, '--tp-ink': ink, '--tp-pop': pop, '--tp-pop-ink': inkOn(pop), '--tp-pop-text': contrast(pop, dark) >= 3 ? pop : ink, '--tp-pop-page': contrast(pop, '#ffffff') >= 3 ? pop : dark, '--tp-tint': light}
     Object.entries(vars).forEach(([k, v]) => body.style.setProperty(k, v))
     body.classList.add('pp-try')
-  }, [on, study, stage])
+  }, [on, colors, full])
 }

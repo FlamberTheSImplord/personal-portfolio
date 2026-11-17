@@ -1,5 +1,5 @@
 import {useMemo, useRef, useState, type CSSProperties} from 'react'
-import {ArrowUpRight, Braces, Check, FlaskConical, PanelTop, Search, Wind, X} from 'lucide-react'
+import {ArrowUpRight, Braces, Brush, Check, FlaskConical, PanelTop, Search, Wind, X} from 'lucide-react'
 import {SlashHint, useSlashFocus} from '../filters/Filters'
 import {asCss, asTailwind, books, comboName, combos, comboSources, type BookId, type ShelfCombo} from './combos'
 import {inkOn} from './color'
@@ -14,7 +14,7 @@ type ShelfId = BookId | 'all'
 const shelfBooks: {id: ShelfId, name: string}[] = [{id: 'all', name: 'All'}, ...books]
 const PAGE = 24, SECTORS = 12
 
-export function Shelf({onStudy}: {onStudy: (id: SceneId) => void}) {
+export function Shelf({onStudy, onTry, tried}: {onStudy: (id: SceneId) => void, onTry: (c: ShelfCombo) => void, tried?: string}) {
   const [open, setOpen] = useState<ShelfId>('all'), [query, setQuery] = useState(''), [hue, setHue] = useState<number | null>(null)
   const [shown, setShown] = useState(PAGE), [copied, setCopied] = useState<string | null>(null)
   const search = useRef<HTMLInputElement>(null)
@@ -58,7 +58,7 @@ export function Shelf({onStudy}: {onStudy: (id: SceneId) => void}) {
 
     <div className="sh-book" key={`${open}-${query}-${hue}`}>
       <header><b>{book.name}</b><span>{list.length}</span>{(query || hue !== null) && <button className="sh-clear" onClick={() => { setQuery(''); setHue(null) }}><X size={12}/>Clear</button>}</header>
-      {list.length ? <div className="sh-grid">{list.slice(0, shown).map((c, i) => <Card key={c.id} combo={c} index={i} gradient={open === 'gradient'} copied={copied} onCopy={copy} onStudy={onStudy}/>)}</div>
+      {list.length ? <div className="sh-grid">{list.slice(0, shown).map((c, i) => <Card key={c.id} combo={c} index={i} gradient={open === 'gradient'} copied={copied} onCopy={copy} onStudy={onStudy} onTry={onTry} tried={tried === c.id}/>)}</div>
         : <p className="sh-empty">No combos match.</p>}
       {list.length > shown && <button className="sh-more" onClick={() => setShown(n => n + PAGE)}>Show {Math.min(PAGE, list.length - shown)} more</button>}
     </div>
@@ -67,7 +67,7 @@ export function Shelf({onStudy}: {onStudy: (id: SceneId) => void}) {
   </section>
 }
 
-function Card({combo: c, index, gradient, copied, onCopy, onStudy}: {combo: ShelfCombo, index: number, gradient: boolean, copied: string | null, onCopy: (key: string, text: string) => void, onStudy: (id: SceneId) => void}) {
+function Card({combo: c, index, gradient, copied, onCopy, onStudy, onTry, tried}: {combo: ShelfCombo, index: number, gradient: boolean, copied: string | null, onCopy: (key: string, text: string) => void, onStudy: (id: SceneId) => void, onTry: (c: ShelfCombo) => void, tried: boolean}) {
   const done = (k: string) => copied === `${c.id}-${k}`
   return <article className="sh-card" style={{'--d': `${Math.min(index, 12) * 35}ms`} as CSSProperties}>
     <div className={`sh-strip${gradient ? ' is-gradient' : ''}`} style={gradient ? {background: `linear-gradient(in oklch 90deg, ${c.colors.map(s => s.hex).join(', ')})`} : undefined}>
@@ -82,6 +82,7 @@ function Card({combo: c, index, gradient, copied, onCopy, onStudy}: {combo: Shel
     <div className="sh-actions">
       <button onClick={() => onCopy(`${c.id}-css`, asCss(c))} title="Copy CSS variables" aria-label="Copy CSS variables">{done('css') ? <Check size={14}/> : <Braces size={14}/>}</button>
       <button onClick={() => onCopy(`${c.id}-tw`, asTailwind(c))} title="Copy Tailwind theme" aria-label="Copy Tailwind theme">{done('tw') ? <Check size={14}/> : <Wind size={14}/>}</button>
+      <button onClick={() => onTry(c)} aria-pressed={tried} title="Try on portfolio" aria-label="Try on portfolio"><Brush size={14}/></button>
       {c.study && <button onClick={() => onStudy(c.study!)} title="Open site study" aria-label="Open site study"><PanelTop size={14}/></button>}
       <a href={`/playground/?p=${c.id}`} title="Try in playground" aria-label="Try in playground"><FlaskConical size={14}/></a>
     </div>

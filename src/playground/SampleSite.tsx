@@ -1,11 +1,12 @@
-import {useEffect, useState, type CSSProperties, type PointerEvent, type ReactNode} from 'react'
+import {lazy, Suspense, useEffect, useState, type CSSProperties, type PointerEvent, type ReactNode} from 'react'
 import {motion as m, useMotionValue, useReducedMotion, useSpring, type Transition} from 'motion/react'
 import type {ShelfCombo} from '../palette/combos'
 import {contrast, inkOn, luminance} from '../palette/color'
-import {oklch} from '../palette/oklch'
+import {hueGap, oklch, toHex} from '../palette/oklch'
 import type {IconPreset, LoaderPreset, LoaderVariant, MotionPreset, StylePreset, TogglePreset, VisualPreset} from './presets'
 import {ThemeToggle, Visual} from './Visuals'
 import './visuals.css'
+import './loaders.css'
 import type {IconName, IconRender} from './icons/types'
 
 // A small, original landing page that takes any palette, style, motion and icon set from the playground.
@@ -16,20 +17,36 @@ const iconSets: Record<IconPreset['set'], () => Promise<{default: IconRender}>> 
 }
 
 export type Mode = 'light' | 'dark'
+export type Template = 'landing' | 'dashboard'
+// The dashboard template is the Fintrack recreation from Web designs, loaded only when picked.
+const Fintrack = lazy(() => import('../web-designs/fintrack/Fintrack').then(m => ({default: m.FintrackApp})))
+
+/** A page colour only works raw when it is quiet: near-white or near-black and low in chroma.
+ *  A loud one (Editeaze's tangerine) becomes a soft tint of its own hue, and stays available as an accent. */
+function calmPage(hex: string, mode: Mode) {
+  const o = oklch(hex)
+  if (mode === 'light') return o.l >= .8 && o.c <= .12 ? hex : toHex({l: .975, c: Math.min(o.c, .025), h: o.h})
+  return o.l <= .32 && o.c <= .12 ? hex : toHex({l: .2, c: Math.min(o.c, .035), h: o.h})
+}
 
 /** Page, text and action colours for a combo, keeping text at 4.5:1 and actions at 3:1 against the page. */
 export function siteColours(combo: ShelfCombo, mode: Mode) {
   const hexes = combo.colors.map(s => s.hex), byL = [...hexes].sort((a, b) => luminance(a) - luminance(b))
-  const bg = mode === 'light' ? byL.at(-1)! : byL[0], far = mode === 'light' ? byL[0] : byL.at(-1)!
+  const bg = calmPage(mode === 'light' ? byL.at(-1)! : byL[0], mode), far = mode === 'light' ? byL[0] : byL.at(-1)!
   const ink = contrast(far, bg) >= 4.5 ? far : inkOn(bg)
   const pops = hexes.filter(h => h !== bg && contrast(h, bg) >= 3).sort((a, b) => oklch(b).c - oklch(a).c)
   const acc = pops[0] ?? ink
-  // Second action colour for two-tone effects (gradient buttons): the next colour that still reads, else a shade of the first.
-  const acc2 = pops[1] ?? hexes.find(h => h !== bg && h !== acc) ?? acc
+  // Second colour for two-tone effects (gradients, glows): the one furthest in hue from the accent, weighted by how
+  // colourful it is, so a gradient never fades into near-black. Falls back to a hue-shifted accent.
+  const a = oklch(acc), rest = hexes.filter(h => h !== acc && h !== bg)
+  // A near-grey accent has no meaningful hue, so then only colourfulness counts.
+  const score = (h: string) => { const o = oklch(h); return (a.c < .03 ? 100 : hueGap(o.h, a.h)) * o.c * (o.l > .15 && o.l < .95 ? 1 : .2) }
+  const best = [...rest].sort((x, y) => score(y) - score(x))[0]
+  const acc2 = best && score(best) > 2 ? best : toHex({l: a.l, c: a.c, h: (a.h + 40) % 360})
   return {bg, ink, acc, acc2, accInk: inkOn(acc)}
 }
 
-export function SampleSite({combo, mode, look, move, icon, spin, art, toggle, onMode, replay}: {combo: ShelfCombo, mode: Mode, look: StylePreset, move: MotionPreset, icon: IconPreset, spin: LoaderPreset, art?: VisualPreset, toggle?: TogglePreset, onMode: (m: Mode) => void, replay: number}) {
+export function SampleSite({combo, mode, look, move, icon, spin, art, toggle, onMode, replay, template = 'landing'}: {combo: ShelfCombo, mode: Mode, look: StylePreset, move: MotionPreset, icon: IconPreset, spin: LoaderPreset, art?: VisualPreset, toggle?: TogglePreset, onMode: (m: Mode) => void, replay: number, template?: Template}) {
   const [render, setRender] = useState<IconRender | null>(null)
   useEffect(() => { let live = true; iconSets[icon.set]().then(mod => { if (live) setRender(() => mod.default) }); return () => { live = false } }, [icon.set])
   const I = (name: IconName, size = 18) => render ? render(name, {size, stroke: icon.stroke, weight: icon.weight, variant: icon.variant}) : <span style={{width: size, height: size, display: 'inline-block'}}/>
@@ -37,6 +54,10 @@ export function SampleSite({combo, mode, look, move, icon, spin, art, toggle, on
   const c = siteColours(combo, mode)
   const vars = {'--bg': c.bg, '--ink': c.ink, '--acc': c.acc, '--acc-ink': c.accInk, '--acc2': c.acc2, '--r': `${look.radius}px`, '--rb': `${look.button}px`, '--fw': look.weight} as CSSProperties
   const cls = ['pgs', `pgs-border-${look.border}`, `pgs-shadow-${look.shadow}`, `pgs-surface-${look.surface}`, ...look.effects.map(e => `pgx-${e}`), look.font ? `pgs-font-${look.font}` : '', look.layout ? `pgs-layout-${look.layout}` : ''].join(' ')
+
+  if (template === 'dashboard') return <div className={`${cls} pgs-dash`} style={vars} key={replay}>
+    <Suspense fallback={<p className="pgs-wait">Loading dashboard…</p>}><Fintrack move={move} spin={spin.variant} toggle={toggle} mode={mode} onMode={onMode}/></Suspense>
+  </div>
 
   let n = 0 // entrance order, top to bottom
 
@@ -88,7 +109,7 @@ const hidden = ({enter: e}: MotionPreset, index = 0) => ({opacity: e.opacity ?? 
 // Rest state; a clip reveal opens past the edges so card shadows aren't cut off.
 const shown = ({enter: e}: MotionPreset) => ({opacity: 1, x: 0, y: 0, scale: 1, rotate: 0, rotateX: 0, filter: 'blur(0px)', ...(e.clip ? {clipPath: 'inset(-20% -20% -20% -20%)'} : {})})
 
-function Enter({move, index, className, inline, children}: {move: MotionPreset, index: number, className?: string, inline?: boolean, children: ReactNode}) {
+export function Enter({move, index, className, inline, children}: {move: MotionPreset, index: number, className?: string, inline?: boolean, children: ReactNode}) {
   const still = useReducedMotion() || move.id === 'none'
   const Tag = inline ? m.span : m.div
   return <Tag className={className} style={{...(inline ? {display: 'inline-block'} : {}), ...(move.enter.rotateX ? {transformPerspective: 800} : {})}} initial={still ? false : hidden(move, index)} animate={shown(move)} transition={transitionOf(move, index)}>{children}</Tag>
@@ -106,7 +127,7 @@ function Headline({text, move, start}: {text: string, move: MotionPreset, start:
   </span>)}</span>
 }
 
-function Hover({move, children}: {move: MotionPreset, children: ReactNode}) {
+export function Hover({move, children}: {move: MotionPreset, children: ReactNode}) {
   const rx = useSpring(useMotionValue(0), {stiffness: 200, damping: 18}), ry = useSpring(useMotionValue(0), {stiffness: 200, damping: 18})
   if (move.hover === 'tilt') {
     const onMove = (e: PointerEvent<HTMLDivElement>) => { const b = e.currentTarget.getBoundingClientRect(); ry.set(((e.clientX - b.left) / b.width - .5) * 14); rx.set(((e.clientY - b.top) / b.height - .5) * -14) }
@@ -127,7 +148,7 @@ function Card({hot, children}: {hot?: boolean, children: ReactNode}) {
 }
 
 /** Button that shows the chosen loader while "working". The hero button plays it once on load so the loader is visible. */
-function Busy({className, loader, demo, children}: {className: string, loader: LoaderVariant, demo?: boolean, children: ReactNode}) {
+export function Busy({className, loader, demo, children}: {className: string, loader: LoaderVariant, demo?: boolean, children: ReactNode}) {
   const [busy, setBusy] = useState(false)
   useEffect(() => {
     if (!demo) return

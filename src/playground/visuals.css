@@ -1,7 +1,7 @@
 /* Hero visuals, theme toggles and batch-4 style options for the playground sample site. */
 
 /* Hero with art: text left, art right; stacks on narrow sites. */
-.pgs-hero.has-visual{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:28px;align-items:center;max-width:none}
+.pgs-hero.has-visual{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(16px,3cqi,28px);align-items:center;max-width:none}
 .pgs-visual{min-width:0}
 .pgv{position:relative;aspect-ratio:4/3;width:100%;border-radius:var(--r);background:var(--card-bg);border:1px solid var(--line);overflow:hidden;color:var(--ink)}
 
@@ -70,8 +70,12 @@
 
 /* Isometric */
 .pgv-cube{animation:pgv-float 3.6s ease-in-out infinite}
-.pgv-cube .top{fill:color-mix(in srgb,var(--acc) 70%,#fff)}.pgv-cube .left{fill:var(--acc)}.pgv-cube .right{fill:color-mix(in srgb,var(--acc) 70%,#000)}
-.pgv-cube .edge{fill:none;stroke:var(--acc2);stroke-width:5;opacity:.25}
+/* Dark faces, bright edges: figures that light up */
+.pgv-cube .top{fill:color-mix(in srgb,var(--acc) 22%,var(--bg))}.pgv-cube .left{fill:color-mix(in srgb,var(--acc) 10%,var(--bg))}.pgv-cube .right{fill:color-mix(in srgb,var(--acc) 5%,var(--bg))}
+.pgv-cube path{stroke:var(--acc);stroke-width:1.2;stroke-linejoin:round}
+.pgv-cube .edge{fill:none;stroke-width:6;opacity:.14}
+.pgv-cube .top{animation:pgv-glow 3.6s ease-in-out infinite}
+@keyframes pgv-glow{50%{fill:color-mix(in srgb,var(--acc) 45%,var(--bg))}}
 @keyframes pgv-float{50%{transform:translateY(-6px)}}
 
 /* Shader-style gradient (no filters: layered radial gradients drifting) */
@@ -178,7 +182,8 @@
 .pgt-switch.is-dark .pgt-track{background:var(--acc)}
 .pgt-switch.is-dark .pgt-track i{transform:translateX(16px);background:var(--acc-ink)}
 
-@container (max-width:760px){.pgs-hero.has-visual{grid-template-columns:1fr}.pgs-visual{max-width:420px}}
+.pgs-hero.has-visual h1{font-size:clamp(28px,5.4cqi,46px)}
+@container (max-width:560px){.pgs-hero.has-visual{grid-template-columns:1fr}.pgs-visual{max-width:420px}}
 @container (max-width:460px){.pgs-layout-bento .pgs-features{grid-template-columns:1fr}.pgs-layout-bento .pgs-features>*{grid-row:auto!important}}
 @container (max-width:620px){.pgs-nav .pgt{margin-left:auto}.pgt~.pgs-menu{margin-left:4px}}
 @media(prefers-reduced-motion:reduce){.pgv *,.pgv{animation:none!important}.pgv-line,.pgv-glow{stroke-dashoffset:0}.pgv-area,.pgv-dot,.pgv-chat p{opacity:1}.pgv-bars i{transform:none}}
