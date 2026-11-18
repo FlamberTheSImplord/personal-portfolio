@@ -29,3 +29,9 @@ export function toHex({l, c, h}: Oklch) {
 
 /** Smallest angle between two hues, 0–180. */
 export const hueGap = (a: number, b: number) => { const d = Math.abs(a - b) % 360; return d > 180 ? 360 - d : d }
+
+/** Colour temperature from hue. Near-greys count as neutral. */
+export function temperature(hex: string) {
+  const {c, h} = oklch(hex)
+  return c < .035 ? 'Neutral' : h >= 345 || h < 130 ? 'Warm' : 'Cool'
+}

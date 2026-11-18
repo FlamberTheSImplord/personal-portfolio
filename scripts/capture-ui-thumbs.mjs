@@ -3,10 +3,11 @@
 // Sites come from src/ui-library/resources.ts. Entries marked `still` get only the tall still; the rest also get a video loop.
 // Stills render best in software mode; motion loops need the GPU for real frame rates:
 //   ONLY=still node scripts/capture-ui-thumbs.mjs && GPU=1 ONLY=video node scripts/capture-ui-thumbs.mjs
+//   npm run library:sync   captures only the resources whose thumbnail files are missing.
 // Output: public/ui-library/directory/<id>.mp4 + <id>-poster.webp (the site's own hero motion, a cursor pass, then a scroll),
 // and <id>.webp (tall still, fallback for sites that block headless browsers).
 import {spawn, execFileSync} from 'node:child_process'
-import {mkdirSync, mkdtempSync, rmSync, writeFileSync} from 'node:fs'
+import {existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync} from 'node:fs'
 import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {resources} from '../src/ui-library/resources.ts'
@@ -17,6 +18,9 @@ const local = {stageshow: 'http://localhost:5173/vendor/stageshow/playground/ind
 const sites = Object.fromEntries(resources.map(r => [r.id, local[r.id] ?? r.url]))
 // uiverse.io, ui8.net and deck.gallery block headless browsers and horizonx.so renders blank, so their stills come from a normal browser session.
 const motion = new Set(resources.filter(r => !r.still).map(r => r.id))
+const onlyMissing = process.argv.includes('--missing')
+const missing = resources.filter(r => !(r.still ? [`${r.id}.webp`] : [`${r.id}.mp4`, `${r.id}-poster.webp`]).every(file => existsSync(join(out, file)))).map(r => r.id)
+if (onlyMissing && !missing.length) { console.log('UI Library thumbnails are up to date.'); process.exit(0) }
 const W = 1440, H = 900, SLICES = 4
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
@@ -111,7 +115,8 @@ async function capture(id, url) {
 
 try {
   await connect()
-  const ids = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(sites).filter(id => process.env.ONLY !== 'video' || motion.has(id))
+  const named = process.argv.slice(2).filter(arg => arg !== '--missing')
+  const ids = onlyMissing ? missing : named.length ? named : Object.keys(sites).filter(id => process.env.ONLY !== 'video' || motion.has(id))
   for (const id of ids) { try { await capture(id, sites[id]) } catch (e) { console.log(id, 'FAILED', e.message) } }
 } finally { try { ws?.close() } catch {} proc.kill(); await sleep(500); rmSync(profile, {recursive: true, force: true}) }
 console.log('notes in', notes)

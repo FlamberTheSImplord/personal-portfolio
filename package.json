@@ -7,7 +7,8 @@
     "dev": "vite --host 127.0.0.1",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "build:boardui": "node scripts/build-boardui.mjs"
+    "build:boardui": "node scripts/build-boardui.mjs",
+    "library:sync": "node --experimental-strip-types scripts/capture-ui-thumbs.mjs --missing"
   },
   "dependencies": {
     "@devigner-ui/icons": "^3.7.1",

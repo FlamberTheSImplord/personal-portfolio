@@ -1,4 +1,4 @@
-import {useEffect, useLayoutEffect, useRef, useState, type CSSProperties} from 'react'
+import {lazy, Suspense, useEffect, useLayoutEffect, useRef, useState, type CSSProperties} from 'react'
 import {ArrowUpRight, Check, ChevronLeft, ChevronRight, Copy} from 'lucide-react'
 import {SegmentedControl, SegmentedControlItem} from '../../vendor/boardui/components/base/segmented-control/segmented-control'
 import {Switch} from '../../vendor/boardui/components/base/switch/switch'
@@ -9,17 +9,14 @@ import {references, shares, studies, type PaletteStudy, type ReferenceId, type S
 import {addedOn, byDate, paletteAge, showDate, type PaletteOrder} from './dates'
 import type {ShelfCombo} from './combos'
 import {contrast, grade, inkOn, luminance} from './color'
+import {temperature} from './oklch'
 import '../ui-library/boardui/components.css'
 import './palette-page.css'
 
+const RefOverlay = import.meta.env.DEV ? lazy(() => import('./RefOverlay')) : null
 const pad = (n: number) => String(n).padStart(2, '0')
 const roles = ['Base', 'Support', 'Accent'] as const
 const stageName: Record<Stage, string> = {two: 'Compact', three: 'Full'}
-const notes: Record<ReferenceId, string> = {
-  niki: 'Globynk recreated from the reel; Editeaze reinterpreted.',
-  charles: 'Murmur and Pocket recreated from the reel; Timbre reinterpreted. Fonts are stand-ins.',
-  charles2: 'Heroes recreated from the reel with free Pexels photos. Fonts are stand-ins.',
-}
 
 export default function PalettePage() {
   const [index, setIndex] = useState(0), [stage, setStage] = useState<Stage>('two'), [replay, setReplay] = useState(0), [tryOn, setTryOn] = useState(false), [tried, setTried] = useState<ShelfCombo | null>(null), [order, setOrder] = useState<PaletteOrder>('new')
@@ -77,7 +74,7 @@ export default function PalettePage() {
     </BrowserFrame>
 
     <Details study={study} stage={stage}/>
-    <p className="reference-note pp-note" key={study.reference}>{notes[study.reference]} HEX from the reel’s swatch cards.</p>
+    <p className="reference-note pp-note" key={`${study.reference}-${study.colorNote ?? ''}`}>{references[study.reference].note} {study.colorNote ?? 'HEX from the reel’s swatch cards.'}</p>
   </div>
 }
 
@@ -137,6 +134,7 @@ function Preview({study, accent, replay}: {study: PaletteStudy, accent: boolean,
         <Scene key={`${s.id}-${replay}`} id={s.id} accent={accent}/>
       </div>
     </div>)}
+    {RefOverlay && <Suspense fallback={null}><RefOverlay id={study.id} accent={accent}/></Suspense>}
   </div>
 }
 
@@ -168,7 +166,7 @@ function Details({study, stage}: {study: PaletteStudy, stage: Stage}) {
           <span className="pp-label"><b>{c.name}</b><small>{copied === c.hex ? 'Copied' : c.hex}</small></span>
         </button>
       })}</div>
-      <div className="pp-contrast">{pairs.map(([fg, bg, ratio], i) => <span key={fg} className={i === 1 && stage === 'two' ? 'off' : ''}><b>{ratio}:1</b> {fg} with {bg}<em>{grade(Number(ratio))}</em></span>)}</div>
+      <div className="pp-contrast">{pairs.map(([fg, bg, ratio], i) => <span key={fg} className={i === 1 && stage === 'two' ? 'off' : ''}><b>{ratio}:1</b> {fg} with {bg}<em>{grade(Number(ratio))}</em></span>)}<span className={`pp-temp${stage === 'two' ? ' off' : ''}`}>{temperature(base.hex)} page, {temperature(accent.hex).toLowerCase()} accent</span></div>
     </div>
   </div>
 }

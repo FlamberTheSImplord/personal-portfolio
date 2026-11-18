@@ -1,14 +1,8 @@
-// When each palette source joined the library. Kept apart from the palette data so the sidebar can read it cheaply.
-// Add a source here with its deployment date; sorting, labels and the sidebar "New" marker follow automatically.
+// Dates read from sources.ts: sorting, labels and the sidebar "New" marker follow automatically.
+import {sources, type SourceId} from './sources'
 
-export const addedOn = {
-  niki: '2026-11-05',
-  charles: '2026-11-16',
-  '346eur': '2026-11-17',
-  charles2: '2026-11-18',
-} as const
+export const addedOn = Object.fromEntries(Object.entries(sources).map(([id, s]) => [id, s.added])) as Record<SourceId, string>
 
-export type DatedSource = keyof typeof addedOn
 export type PaletteOrder = 'new' | 'old'
 
 const dates = Object.values(addedOn) as string[]

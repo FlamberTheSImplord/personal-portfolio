@@ -1,17 +1,13 @@
 // Colour combos for the shelf. Add combos here only: moods (which books a combo sits in) are worked out
 // from the HEX values, so the shelf stays sorted at any size.
-import {references, studies, type SceneId, type Swatch} from './palettes'
+import {studies, type SceneId, type Swatch} from './palettes'
+import {sources, type SourceId} from './sources'
 import {contrast, grade} from './color'
 import {hueGap, oklch, type Oklch} from './oklch'
 import {addedOn} from './dates'
 
-export const comboSources = {
-  '346eur': {creator: '346eur', url: 'https://www.threads.com/@346eur/post/DfoeH__Ezj7'},
-  niki: references.niki,
-  charles: references.charles,
-  charles2: references.charles2,
-} as const
-export type ComboSource = keyof typeof comboSources
+export const comboSources = sources
+export type ComboSource = SourceId
 
 export type Combo = {id: string, colors: Swatch[], source: ComboSource, study?: SceneId}
 

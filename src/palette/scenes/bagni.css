@@ -1,0 +1,16 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Cormorant+Garamond:wght@500;600&display=swap');
+.bg{background:#DFBFA0;color:#7A3E28;font-family:'Cormorant Garamond',Georgia,serif}
+.bg-shadow{animation:sk-in 1.2s ease backwards,bg-sun 16s 1.2s ease-in-out infinite alternate}
+.bg-parasol{animation:sk-in 1.2s ease backwards,bg-sway 11s 1.2s ease-in-out infinite alternate}
+.bg-type{inset:0;width:100%;height:100%;fill:#7A3E28}
+.bg-h{font:400 118px 'Playfair Display',Georgia,serif}
+.bg-s{font:italic 400 176px 'Playfair Display',Georgia,serif}
+.bg-sea{transition:fill .8s ease}
+.bg.is-accent .bg-sea{fill:#0C45B0}
+.bg-nav{inset:0 0 auto;height:72px}
+.bg-nav b{position:absolute;left:39px;top:15px;font-size:36px;font-weight:500;line-height:42px}
+.bg-nav span{position:absolute;top:23px;font-size:21px;font-weight:600;line-height:26px}
+.bg-book{left:498px;top:702px;width:281px;height:61px;border-radius:7px;background:#7A3E28;color:#F4E6D5;font-size:30px;font-weight:600;line-height:58px;text-align:center}
+.bg-fact{top:782px;font-size:24px;font-weight:600;line-height:30px}
+@keyframes bg-sun{to{rotate:1.15deg;scale:1.012}}
+@keyframes bg-sway{to{rotate:.5deg}}

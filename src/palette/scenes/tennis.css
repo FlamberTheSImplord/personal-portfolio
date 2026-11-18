@@ -1,0 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..100,700..900&family=Inter+Tight:wght@400;500;600&display=swap');
+.tn{background:#298BD0;color:#F9FAFC;font-family:'Inter Tight',sans-serif}
+.tn-clouds{animation:sk-in 1.2s ease backwards,tn-clouds 24s 1.2s ease-in-out infinite alternate}
+.tn-player{z-index:2;animation:sk-in .9s ease backwards,tn-hang 4.8s 1.2s ease-in-out infinite alternate}
+.tn-type{inset:0;z-index:1;width:100%;height:100%;fill:#F9FAFC}
+.tn-type text{font:800 380px 'Archivo',sans-serif;font-stretch:62%;font-variation-settings:'wdth' 62,'wght' 800}
+.tn-nav{inset:0 0 auto;z-index:3;height:58px;font-size:15px;font-weight:500}.tn-nav a{position:absolute;top:18px}
+.tn-nav a:first-of-type::after{content:'';position:absolute;left:0;right:0;bottom:-8px;height:2px;background:currentColor}
+.tn-nav b{position:absolute;left:57px;top:12px;display:flex;gap:12px;font-size:12px;line-height:14px;letter-spacing:.06em}.tn-nav b svg{width:39px;height:32px;fill:currentColor}
+.tn-nav em,.tn-cta{transition:background .8s,color .8s}
+.tn-nav em{position:absolute;left:1078px;top:7px;width:163px;height:42px;border-radius:5px;background:#F9FAFC;color:#172B3C;font-style:normal;font-weight:600;line-height:42px;text-align:center}
+.tn.is-accent .tn-nav em,.tn.is-accent .tn-cta{background:#E5282F;color:#fff}
+.tn-eyebrow{left:57px;top:103px;z-index:3;font-size:18px;font-weight:600;letter-spacing:.13em;text-transform:uppercase}
+.tn-rule{left:57px;top:495px;z-index:3;width:78px;height:3px;background:currentColor}
+.tn-copy{left:57px;top:525px;z-index:3;font-size:34px;font-weight:600;line-height:40px}
+.tn-cta{left:57px;top:631px;z-index:3;display:flex;align-items:center;justify-content:center;gap:7px;width:276px;height:54px;border-radius:5px;background:#F9FAFC;color:#172B3C;font-size:19px;font-weight:600}
+.tn-arrows{left:60px;top:716px;z-index:3;display:flex;gap:10px}.tn-arrows i{display:grid;place-items:center;width:43px;height:43px;border-radius:5px;background:#F9FAFC;color:#172B3C}
+@keyframes tn-clouds{to{translate:-18px 4px}}
+@keyframes tn-hang{to{translate:0 -9px;rotate:.45deg}}

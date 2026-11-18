@@ -65,6 +65,7 @@
 .pp-contrast{display:flex;flex-direction:column;align-items:flex-end;gap:7px;margin-top:16px;font-size:10px;color:#7f8897}
 .pp-contrast span{transition:opacity .4s}
 .pp-contrast span.off{opacity:0}
+.pp-temp{font-weight:500;color:#4b5565}
 .pp-contrast b{font-weight:600;color:#3c4452;font-variant-numeric:tabular-nums}
 .pp-contrast em{font-style:normal;margin-left:7px;padding:2px 6px;border-radius:4px;background:#eef1f6;color:#4b5565;font-size:9px;font-weight:500}
 .pp-note{animation:pp-copy .55s var(--pp-ease) backwards}

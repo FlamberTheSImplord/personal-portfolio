@@ -1,0 +1,13 @@
+.sk-bg{inset:0;width:100%;height:100%}
+.sk-hero>*{position:absolute}
+.sk-layer{animation:sk-in 1.2s ease backwards}
+.sk-layer img{position:absolute;inset:0;display:block;width:100%;height:100%;user-select:none}
+.sk-base{transition:opacity .15s}
+.sk-accent{opacity:0;transition:opacity .9s ease}
+.is-accent .sk-accent{opacity:1}
+.is-accent .sk-layer .sk-base{opacity:0;transition:opacity .15s .9s}
+.sk-hero.is-off *{animation-play-state:paused}
+.sk-rise{animation:sk-rise .9s .25s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes sk-in{from{opacity:0}}
+@keyframes sk-rise{from{opacity:0;translate:0 18px}}
+@media(prefers-reduced-motion:reduce){.sk-hero *{animation:none!important}}

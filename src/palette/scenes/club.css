@@ -1,0 +1,23 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Inter+Tight:wght@400;500;600&display=swap');
+.cb{background:radial-gradient(circle at 50% 44%,#FF3A16,#F32102 58%,#D91C02);color:#FAF7FC;font-family:'Inter Tight',sans-serif}
+.cb-word{inset:0;margin:0;font:900 186px/1 'Archivo',sans-serif;font-stretch:125%;font-variation-settings:'wdth' 125,'wght' 900;letter-spacing:-.025em}
+.cb-word span{position:absolute;display:block;white-space:nowrap;text-align:center}
+.cb-nav{inset:0 0 auto;height:100px;font-size:15px;font-weight:500}.cb-nav span{position:absolute;top:50px}
+.cb-nav b{position:absolute;left:40px;top:42px;display:flex;align-items:center;gap:7px;font-size:17px;font-weight:700}
+.cb-nav i{padding:4px 9px;border-radius:14px 14px 14px 3px;background:#FAF7FC;color:#111;font-style:normal}
+.cb-nav em{position:absolute;left:1042px;top:40px;width:198px;height:44px;border:1px solid #fff9;border-radius:22px;font-style:normal;line-height:42px;text-align:center}
+.cb-card{width:200px;height:258px;border:1px solid #fff5;border-radius:24px;background:#ff5a3bcc;box-shadow:0 22px 46px #8f0d0059;text-align:center;animation:sk-in 1s .25s ease backwards,cb-float 6s 1.2s ease-in-out infinite alternate}
+.cb-a{left:626px;top:318px;rotate:5deg}.cb-b{left:366px;top:522px;rotate:-5deg;animation-delay:.25s,1.8s}
+.cb-card img{display:block;width:118px;height:118px;margin:24px auto 15px;border-radius:50%;background:#FAF7FC}
+.cb-card b,.cb-card small{display:block}.cb-card b{font-size:18px;font-weight:600}.cb-card small{margin-top:5px;font-size:13px;opacity:.8}
+.cb-marks{inset:0;width:100%;height:100%;pointer-events:none}
+.cb-m,.cb-badge path{fill:none;stroke:#C1F701;stroke-linecap:round;stroke-linejoin:round;stroke-width:15;stroke-dasharray:1;stroke-dashoffset:1;transition:stroke-dashoffset .9s cubic-bezier(.3,.7,.2,1)}
+.cb.is-accent .cb-m,.cb.is-accent .cb-badge path{stroke-dashoffset:0}
+.cb-badge{left:951px;top:565px;width:270px;height:270px;opacity:0;scale:.7;transition:opacity .45s,scale .7s cubic-bezier(.2,1.4,.3,1)}
+.cb.is-accent .cb-badge{opacity:1;scale:1}
+.cb-badge svg{display:block;width:100%;height:100%;animation:cb-spin 28s linear infinite}
+.cb-badge circle{fill:#C1F701}.cb-badge text{fill:#14230a;font:700 21px 'Inter Tight',sans-serif;letter-spacing:.16em}
+.cb-badge path{stroke:#14230a;stroke-width:9}
+@keyframes cb-float{to{translate:0 -10px}}
+@keyframes cb-spin{to{rotate:360deg}}
+@media(prefers-reduced-motion:reduce){.cb-m,.cb-badge,.cb-badge path{transition:none}}

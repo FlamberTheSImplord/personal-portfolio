@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap');
+/* Halden Dance Theatre: positions are in the 1280 × 853 design canvas. */
+.hd{background:#0F372B;color:#EFE7DA;font-family:'Instrument Serif',Georgia,serif}
+.hd-main,.hd-front{animation:sk-in 1.2s ease backwards,hd-drift 12s 1.2s ease-in-out infinite alternate}
+.hd-lower{animation:sk-in 1.2s ease backwards,hd-lower 9.5s 1.2s ease-in-out infinite alternate}
+.hd-upper{animation:sk-in 1.2s ease backwards,hd-upper 7.5s 1.2s ease-in-out infinite alternate}
+.hd-wrap{animation:sk-in 1.2s ease backwards,hd-wrap 12s 1.2s ease-in-out infinite alternate}
+.hd-type{inset:0;width:100%;height:100%;fill:#EFE7DA;animation:hd-rise 1s .15s cubic-bezier(.2,.8,.2,1) backwards}
+.hd-spring{font:italic 400 198px 'Instrument Serif',Georgia,serif}
+.hd-season{font:400 184px 'Instrument Serif',Georgia,serif}
+.hd-nav{inset:0 0 auto;height:56px;border-bottom:1px solid #efe7da59}
+.hd-nav b{position:absolute;left:30px;top:12px;font-size:27px;font-weight:400;line-height:32px}
+.hd-nav span,.hd-m,.hd-book{font-size:14px;line-height:20px;letter-spacing:.17em;text-transform:uppercase}
+.hd-nav span{position:absolute;top:21px;line-height:20px}
+.hd-dates{left:30px;top:124px}
+.hd-book{left:28px;top:475px;display:flex;align-items:center;gap:19px}
+.hd-book i{display:grid;place-items:center;width:46px;height:46px;border:1px solid #efe7dac7;border-radius:50%}
+.hd-book svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.1}
+.hd-works{left:1195px;top:269px}
+.hd-works u{display:block;width:33px;height:1px;margin-top:13px;background:currentColor}
+.hd-from{left:1165px;top:731px}
+.hd-nav,.hd-m,.hd-book{animation:hd-rise .9s .3s cubic-bezier(.2,.8,.2,1) backwards}
+@keyframes hd-rise{from{opacity:0;translate:0 18px}}
+@keyframes hd-drift{to{translate:5px -7px;rotate:.42deg;scale:1.006 1.016}}
+@keyframes hd-lower{to{translate:9px 5px;rotate:-.75deg;scale:1.012 1}}
+@keyframes hd-upper{to{translate:-7px 6px;rotate:1.25deg;scale:1.015 1}}
+@keyframes hd-wrap{to{translate:2px -3px;rotate:.25deg}}
