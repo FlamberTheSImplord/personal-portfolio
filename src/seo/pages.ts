@@ -3,6 +3,7 @@
 import {categories, resources, sources, purposes, stacks, prices, installs} from '../ui-library/resources'
 import {libraries} from '../ui-library/catalog'
 import {references, studies as palettes} from '../palette/palettes'
+import {addedOn} from '../palette/dates'
 import {combos, comboName} from '../palette/combos'
 import {reelStudies} from '../ui-tips/reel-data'
 import {presets as playPresets} from '../playground/presets'
@@ -17,21 +18,21 @@ const list = (items: string[]) => `<ul>${items.map(i => `<li>${i}</li>`).join(''
 
 const docs: Omit<PageDoc, 'body'>[] = [
   {path: '/', name: 'Portfolio', title: 'Nik Danish — Design Library', description: "Nik Danish's portfolio and personal collection of colour, motion and interface studies."},
-  {path: '/palettes/', name: 'Colour palette', title: 'Colour palettes — Nik Danish', description: `A shelf of ${combos.length} colour combos sorted by mood, plus five website palette studies.`},
+  {path: '/palettes/', name: 'Colour palette', title: 'Colour palettes — Nik Danish', description: `A shelf of ${combos.length} colour combos sorted by mood, plus ${palettes.length} website palette studies.`},
   {path: '/playground/', name: 'Playground', title: 'Playground — Nik Danish', description: 'Mix a colour palette, a style, a motion and an icon set from the UI Library on one sample site.'},
   {path: '/alignment/', name: 'Text alignment', title: 'Text alignment — Nik Danish', description: 'A product-card study in alignment, grouping and a clearer reading path.'},
-  {path: '/web-designs/', name: 'Web designs', title: 'Web designs — Nik Danish', description: 'Dashboard and website recreations from design reels, shown in browser windows, including a working budget dashboard.'},
+  {path: '/web-designs/', name: 'Web designs', title: 'Web designs — Nik Danish', description: 'Dashboard and website recreations from design reels, shown in browser windows, including a working budget dashboard and three full landing pages.'},
   {path: '/ui-tips/', name: 'UI Designs and Tips', title: 'UI design notes — Nik Danish', description: 'Searchable UI tips, UX laws, hero layout studies and before/after form and paywall studies.'},
   {path: '/ui-library/', name: 'UI Library', title: 'UI Library — Nik Danish', description: `${resources.length} UI resources in ${categories.length} categories: animated components, component kits, CSS snippets, 3D, specialty tools, inspiration, colour tools and design beyond UI.`},
 ]
 
 const bodies: Record<string, () => string> = {
   '/': () => `<p>Portfolio and personal design library: colour palettes, web design recreations, UI tips and a directory of UI resources.</p>`,
-  '/palettes/': () => `<h2>Colour shelf</h2>${list(combos.map(c => `${esc(comboName(c))}: ${c.colors.map(x => x.hex).join(', ')} (${c.moods.join(', ')}; contrast ${c.ratio.toFixed(1)}:1)`))}` + palettes.map(p => `<h2>${esc(p.site)} · ${esc(p.title)}</h2><p>Reference: ${link(references[p.reference].url, references[p.reference].creator)}</p>${list(p.colors.map((c, i) => `${['Base', 'Support', 'Accent'][i]}: ${esc(c.name)} ${c.hex}`))}`).join(''),
+  '/palettes/': () => `<h2>Colour shelf</h2>${list(combos.map(c => `${esc(comboName(c))}: ${c.colors.map(x => x.hex).join(', ')} (${c.moods.join(', ')}; contrast ${c.ratio.toFixed(1)}:1)`))}` + palettes.map(p => `<h2>${esc(p.site)} · ${esc(p.title)}</h2><p>Added ${addedOn[p.reference]}. Reference: ${link(references[p.reference].url, references[p.reference].creator)}</p>${list(p.colors.map((c, i) => `${['Base', 'Support', 'Accent'][i]}: ${esc(c.name)} ${c.hex}`))}`).join(''),
   '/playground/': () => `<p>Pick a palette, then a style, motion and icon set sampled from UI Library entries. Look-alikes are labelled and link to their library.</p>`
     + list(playPresets.map(p => `${esc(p.name)} (${p.kind}, from ${esc(resources.find(r => r.id === p.library)?.name ?? p.library)})`)),
   '/alignment/': () => `<p>Switch between centered and left-aligned product-card compositions to compare how the eye reads them.</p>`,
-  '/web-designs/': () => list(['Fluento · Dashboard V15 and Word library', 'Ember · Projects dashboard', 'Code XR · Admin Dashboard V2 (overview, finance, moderation, announcements)', 'Fintrack · working budget dashboard (drag-and-drop budget board, transactions, goals, summary), after yasrinoori'].map(esc)),
+  '/web-designs/': () => list(['Fluento · Dashboard V15 and Word library', 'Ember · Projects dashboard', 'Code XR · Admin Dashboard V2 (overview, finance, moderation, announcements)', 'Fintrack · working budget dashboard (drag-and-drop budget board, transactions, goals, summary), after yasrinoori', 'Altaval · ski resort landing page (snow report, piste map, ski school, stays, pass builder), hero after charles.unemployed', 'Kiln Coffee · roaster landing page (shop, roast dial, subscription builder, roast curve), hero after charles.unemployed', 'Merrow Botanic Garden · orchid show landing page (events, species, glasshouses, tickets, membership), hero after charles.unemployed'].map(esc)),
   '/ui-tips/': () => reelStudies.map(r => `<h2>${esc(r.title)}</h2><p>Reference: ${link(r.url, r.author)}</p>${list(r.tips.map(t => `${esc(t.title)}: ${esc(t.do)}`))}`).join('')
     + `<h2>Hero studies</h2>${list(heroStudies.map(h => `${esc(h.name)}: ${esc(h.subtitle)}`))}`,
   '/ui-library/': () => categories.map(c => `<h2>${esc(c.name)}</h2><p>${esc(c.line)}</p>${list(resources.filter(r => r.category === c.id).map(r =>

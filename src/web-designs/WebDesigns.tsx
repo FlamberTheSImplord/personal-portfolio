@@ -4,6 +4,9 @@ import './web-designs.css'
 import Ember from './Ember'
 import { LiveMetric, useLiveValue } from './LiveMetric'
 import { BrowserFrame } from './BrowserFrame'
+import { Landing } from './landings/Landing'
+const reelLandings = 'https://www.instagram.com/reels/DfuhfgpRQxa/'
+const landingNote = 'Hero recreated from the reel; the rest of the page is an original extension in the same theme. Photos are free Pexels images, cut out and recoloured, with source links in each footer. Archivo, Playfair Display and Inter Tight stand in for the fonts, and all details are sample data. Controls use BoardUI, Vengeance UI and Animate UI from the UI Library.'
 const AdminDashboard = lazy(() => import('./admin-dashboard/AdminDashboard'))
 const FintrackDemo = lazy(() => import('./fintrack/Fintrack'))
 
@@ -51,4 +54,7 @@ export default function WebDesigns(){return <div className="page wd-page"><div c
  <Site index="03 / Personal finance" title="Fintrack." description="A budget dashboard recreated from yasrinoori’s “After” shot, made to work: drag cards between columns, change statuses, add bills, goals and income, and watch every total update." source="https://www.threads.com/@yasrinoori" credit="yasrinoori" note="Recreated from one still. The layout, cards and sample amounts follow the reference; the profile photo and name are replaced with a stand-in, and the reference’s second “Accounts” heading is labelled Planning. Changes stay in this browser (Reset restores the sample). Motion uses snappy presets from the UI Library: Kinetics springs, Microkit presses and Motion layout animations.">
   <Suspense fallback={<p className="wd-loading">Loading Fintrack…</p>}><FintrackDemo frame={(child, replay) => <BrowserFrame tabs={[{id:'fintrack',title:'fintrack · Financial overview',favicon:<span className="fav-fintrack"/>}]} active="fintrack" url="fintrack.app/finance/overview" onReload={replay}>{child}</BrowserFrame>}/></Suspense>
  </Site>
+ <Site index="04 / Ski resort" title="Altaval." description="A full ski resort landing page: live snow report, piste map, ski school, places to stay and a pass builder." source={reelLandings} credit="charles.unemployed" note={landingNote}><Landing site="altaval"/></Site>
+ <Site index="05 / Coffee roaster" title="Kiln Coffee." description="A full roaster landing page: shop, roast dial, subscription builder and the story of the roast." source={reelLandings} credit="charles.unemployed" note={landingNote}><Landing site="kiln"/></Site>
+ <Site index="06 / Botanic garden" title="Merrow Botanic Garden." description="A full garden landing page: events, orchid species, glasshouses, ticket booking and membership." source={reelLandings} credit="charles.unemployed" note={landingNote}><Landing site="merrow"/></Site>
 </div>}

@@ -3,11 +3,13 @@
 import {references, studies, type SceneId, type Swatch} from './palettes'
 import {contrast, grade} from './color'
 import {hueGap, oklch, type Oklch} from './oklch'
+import {addedOn} from './dates'
 
 export const comboSources = {
   '346eur': {creator: '346eur', url: 'https://www.threads.com/@346eur/post/DfoeH__Ezj7'},
   niki: references.niki,
   charles: references.charles,
+  charles2: references.charles2,
 } as const
 export type ComboSource = keyof typeof comboSources
 
@@ -62,13 +64,13 @@ function moodsOf(o: Oklch[]): BookId[] {
   return m
 }
 
-export type ShelfCombo = Combo & {moods: BookId[], hues: number[], ratio: number, grade: string, search: string}
+export type ShelfCombo = Combo & {added: string, moods: BookId[], hues: number[], ratio: number, grade: string, search: string}
 
 export const combos: ShelfCombo[] = raw.map(c => {
   const o = c.colors.map(s => oklch(s.hex))
   let ratio = 1
   for (const a of c.colors) for (const b of c.colors) ratio = Math.max(ratio, contrast(a.hex, b.hex))
-  return {...c, moods: moodsOf(o), hues: o.filter(x => x.c > .04).map(x => x.h), ratio, grade: grade(ratio),
+  return {...c, added: addedOn[c.source], moods: moodsOf(o), hues: o.filter(x => x.c > .04).map(x => x.h), ratio, grade: grade(ratio),
     search: [...c.colors.flatMap(s => [s.name, s.hex]), comboSources[c.source].creator].join(' ').toLowerCase()}
 })
 

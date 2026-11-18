@@ -3,12 +3,13 @@
 
 export type Swatch = {name: string, hex: string}
 export type Stage = 'two' | 'three'
-export type ReferenceId = 'niki' | 'charles'
-export type SceneId = 'editeaze' | 'globynk' | 'murmur' | 'timbre' | 'pocket'
+export type ReferenceId = 'niki' | 'charles' | 'charles2'
+export type SceneId = 'editeaze' | 'globynk' | 'murmur' | 'timbre' | 'pocket' | 'altaval' | 'kiln' | 'merrow'
 
 export const references = {
   niki: {creator: 'niki.aroca', url: 'https://www.instagram.com/reels/DfIaULMIRC-/'},
   charles: {creator: 'charles.unemployed', url: 'https://www.instagram.com/reels/DfSbrNrR3Gu/'},
+  charles2: {creator: 'charles.unemployed', url: 'https://www.instagram.com/reels/DfuhfgpRQxa/'},
 } as const satisfies Record<ReferenceId, {creator: string, url: string}>
 
 export type PaletteStudy = {
@@ -48,6 +49,21 @@ export const studies: readonly PaletteStudy[] = [
     id: 'pocket', reference: 'charles', site: 'Pocket', host: 'pocket.fm', title: 'Swings like a person',
     colors: [{name: 'Chalk White', hex: '#F3F2EE'}, {name: 'Ink Black', hex: '#08080C'}, {name: 'Acid Green', hex: '#B6FF2E'}],
     canvas: {width: 1280, height: 800}, label: 'Recreation of the Pocket landing page',
+  },
+  {
+    id: 'altaval', reference: 'charles2', site: 'Altaval', host: 'altaval.ski', title: 'Fresh snow overnight',
+    colors: [{name: 'Glacier Blue', hex: '#62A7EA'}, {name: 'Navy', hex: '#0C1B48'}, {name: 'Lemon', hex: '#F2EA1E'}],
+    canvas: {width: 1280, height: 853}, label: 'Recreation of the Altaval ski resort hero',
+  },
+  {
+    id: 'kiln', reference: 'charles2', site: 'Kiln Coffee', host: 'kilncoffee.co.uk', title: 'Roasted to the core',
+    colors: [{name: 'Deep Teal', hex: '#013230'}, {name: 'Cream', hex: '#F3EBDD'}, {name: 'Orange', hex: '#FF6A1F'}],
+    canvas: {width: 1280, height: 853}, label: 'Recreation of the Kiln Coffee hero',
+  },
+  {
+    id: 'merrow', reference: 'charles2', site: 'Merrow', host: 'merrowgarden.org', title: 'Ten thousand orchids',
+    colors: [{name: 'Cream', hex: '#ECE6DC'}, {name: 'Ink', hex: '#050505'}, {name: 'Orchid Pink', hex: '#E65BC4'}],
+    canvas: {width: 1280, height: 853}, label: 'Recreation of the Merrow Botanic Garden hero',
   },
 ]
 

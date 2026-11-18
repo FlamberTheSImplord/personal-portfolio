@@ -1,10 +1,11 @@
 import {useMemo, useRef, useState, type CSSProperties} from 'react'
-import {ArrowUpRight, Braces, Brush, Check, FlaskConical, PanelTop, Search, Wind, X} from 'lucide-react'
+import {ArrowDownWideNarrow, ArrowUpRight, ArrowUpWideNarrow, Braces, Brush, Check, FlaskConical, PanelTop, Search, Wind, X} from 'lucide-react'
 import {SlashHint, useSlashFocus} from '../filters/Filters'
 import {asCss, asTailwind, books, comboName, combos, comboSources, type BookId, type ShelfCombo} from './combos'
 import {inkOn} from './color'
 import {hueGap, oklch} from './oklch'
 import type {SceneId} from './palettes'
+import {byDate, paletteAge, showDate, type PaletteOrder} from './dates'
 import './shelf.css'
 
 // Colour shelf: one book per mood. Opening a book shows its combos; search and the hue wheel filter every book at once.
@@ -14,7 +15,7 @@ type ShelfId = BookId | 'all'
 const shelfBooks: {id: ShelfId, name: string}[] = [{id: 'all', name: 'All'}, ...books]
 const PAGE = 24, SECTORS = 12
 
-export function Shelf({onStudy, onTry, tried}: {onStudy: (id: SceneId) => void, onTry: (c: ShelfCombo) => void, tried?: string}) {
+export function Shelf({onStudy, onTry, tried, order, onOrder}: {onStudy: (id: SceneId) => void, onTry: (c: ShelfCombo) => void, tried?: string, order: PaletteOrder, onOrder: (next: PaletteOrder) => void}) {
   const [open, setOpen] = useState<ShelfId>('all'), [query, setQuery] = useState(''), [hue, setHue] = useState<number | null>(null)
   const [shown, setShown] = useState(PAGE), [copied, setCopied] = useState<string | null>(null)
   const search = useRef<HTMLInputElement>(null)
@@ -22,8 +23,8 @@ export function Shelf({onStudy, onTry, tried}: {onStudy: (id: SceneId) => void, 
 
   const matches = useMemo(() => {
     const q = query.trim().toLowerCase().split(/\s+/).filter(Boolean)
-    return combos.filter(c => q.every(w => c.search.includes(w)) && (hue === null || c.hues.some(h => hueGap(h, hue * 30 + 15) <= 20)))
-  }, [query, hue])
+    return combos.filter(c => q.every(w => c.search.includes(w)) && (hue === null || c.hues.some(h => hueGap(h, hue * 30 + 15) <= 20))).sort((a, b) => byDate(order)(a.added, b.added))
+  }, [query, hue, order])
   const shelf = useMemo(() => shelfBooks.map(b => {
     const id = b.id, items = id === 'all' ? matches : matches.filter(c => c.moods.includes(id))
     return {...b, items, cover: spineColour(b.id, items)}
@@ -39,6 +40,10 @@ export function Shelf({onStudy, onTry, tried}: {onStudy: (id: SceneId) => void, 
   return <section className="sh" aria-label="Colour shelf">
     <div className="sh-tools">
       <label className="ut-search sh-search"><Search size={15} aria-hidden="true"/><input ref={search} type="search" aria-label="Search colours by name or HEX" placeholder="Name or HEX" value={query} onChange={e => { setQuery(e.target.value); setShown(PAGE) }}/><SlashHint/></label>
+      <div className="sh-order" role="group" aria-label="Sort palettes by date">
+        <button aria-pressed={order === 'new'} onClick={() => onOrder('new')}><ArrowDownWideNarrow size={13}/>Newest</button>
+        <button aria-pressed={order === 'old'} onClick={() => onOrder('old')}><ArrowUpWideNarrow size={13}/>Oldest</button>
+      </div>
       <HueWheel value={hue} onChange={h => { setHue(h); setShown(PAGE) }}/>
     </div>
 
@@ -79,6 +84,7 @@ function Card({combo: c, index, gradient, copied, onCopy, onStudy, onTry, tried}
       <span className="sh-name" title={comboName(c)}>{comboName(c)}</span>
       <span className={`sh-ratio${c.ratio >= 4.5 ? ' ok' : ''}`} title="Best text contrast in this combo">{c.ratio.toFixed(1)}:1 <em>{c.grade}</em></span>
     </div>
+    <div className="sh-date"><time dateTime={c.added}>{showDate(c.added)}</time>{paletteAge(c.added) && <em data-age={paletteAge(c.added)}>{paletteAge(c.added)}</em>}</div>
     <div className="sh-actions">
       <button onClick={() => onCopy(`${c.id}-css`, asCss(c))} title="Copy CSS variables" aria-label="Copy CSS variables">{done('css') ? <Check size={14}/> : <Braces size={14}/>}</button>
       <button onClick={() => onCopy(`${c.id}-tw`, asTailwind(c))} title="Copy Tailwind theme" aria-label="Copy Tailwind theme">{done('tw') ? <Check size={14}/> : <Wind size={14}/>}</button>

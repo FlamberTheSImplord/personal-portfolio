@@ -58,3 +58,5 @@
 
 @media(max-width:580px){.sh-tools{flex-wrap:wrap}.sh-search{max-width:none}.sh-shelf{gap:5px;padding-inline:8px}.sh-spine{flex:1 1 0;min-width:0}.sh-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sh-actions>*{width:26px;height:26px}.sh-strip{height:58px}.sh-meta{flex-direction:column;gap:3px}}
 @media(prefers-reduced-motion:reduce){.sh *{animation:none!important;transition-duration:.01s!important}}
+.sh-order{display:flex;gap:2px;margin-left:auto;padding:3px;border-radius:9px;background:#e8ecf2}.sh-order button{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border:0;border-radius:6px;background:none;color:#5d6574;font:inherit;font-size:11.5px;cursor:pointer;transition:background .2s,color .2s}.sh-order button[aria-pressed=true]{background:#fff;color:#20242d;box-shadow:0 1px 2px #1b2a4a1f}
+.sh-date{display:flex;align-items:center;gap:6px;min-height:18px;margin:5px 5px 0;font-size:10.5px;color:#7d8696}.sh-date em{padding:1px 6px;border-radius:99px;background:#edf2ff;color:#2c56d6;font-size:9.5px;font-style:normal;font-weight:600}.sh-date em[data-age=Oldest]{background:#eef0f3;color:#5d6574}

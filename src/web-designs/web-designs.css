@@ -10,3 +10,6 @@
 .wd-canvas{position:absolute;top:0;left:0}
 .wd-live-metric{font-variant-numeric:tabular-nums;white-space:nowrap}.wd-task-track i{animation:none}.wd-task>strong{min-width:49px;text-align:right}.wd-friend>b{min-width:79px;text-align:right}
 @media(max-width:580px){.wd-site-head{display:block}.wd-site-head .source{margin-top:15px}.wd-site+.wd-site{margin-top:56px;padding-top:40px}}
+.lp-frame[data-off] *{animation-play-state:paused!important}
+.lp-frame{container-type:inline-size}.lp-scroll{height:min(66.6cqw,86vh);min-height:540px;overflow:auto;scrollbar-width:thin;outline-offset:-3px}
+.lp-fav{display:block;width:13px;height:13px;border-radius:50%}

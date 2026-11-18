@@ -8,10 +8,16 @@ import './palette-scenes.css'
 const Murmur = lazy(() => import('./scenes/Murmur'))
 const Timbre = lazy(() => import('./scenes/Timbre'))
 const Pocket = lazy(() => import('./scenes/Pocket'))
+const reelHero = (name: 'AltavalHero' | 'KilnHero' | 'MerrowHero') => lazy(() => import('../web-designs/landings/heroes').then(m => ({default: m[name]})))
+const heroes = {altaval: reelHero('AltavalHero'), kiln: reelHero('KilnHero'), merrow: reelHero('MerrowHero')}
 
 const vars = {'--pd-charcoal': '#21232E', '--pd-royal': '#105BFF', '--pd-tangerine': '#FE8500', '--pd-aqua': '#74FFED', '--pd-midnight': '#171F44', '--pd-pink': '#FE81D1'} as CSSProperties
 
 export function Scene({id, accent}: {id: SceneId, accent: boolean}) {
+  if (id === 'altaval' || id === 'kiln' || id === 'merrow') {
+    const Hero = heroes[id]
+    return <div className="pd-scene" style={vars}><div className="pd-site lp-scene" ref={el => el?.setAttribute('inert', '')}><Suspense fallback={null}><Hero accent={accent}/></Suspense></div></div>
+  }
   const scene = id === 'editeaze' ? <Editeaze accent={accent}/> : id === 'globynk' ? <Globynk accent={accent}/>
     : id === 'murmur' ? <Murmur accent={accent}/> : id === 'timbre' ? <Timbre accent={accent}/> : <Pocket accent={accent}/>
   return <div className="pd-scene" style={vars}><Suspense fallback={null}>{scene}</Suspense></div>

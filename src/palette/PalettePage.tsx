@@ -6,6 +6,7 @@ import {BrowserFrame} from '../web-designs/BrowserFrame'
 import {Scene} from './PaletteScene'
 import {Shelf} from './Shelf'
 import {references, shares, studies, type PaletteStudy, type ReferenceId, type Stage, type Swatch} from './palettes'
+import {addedOn, byDate, paletteAge, showDate, type PaletteOrder} from './dates'
 import type {ShelfCombo} from './combos'
 import {contrast, grade, inkOn, luminance} from './color'
 import '../ui-library/boardui/components.css'
@@ -17,10 +18,11 @@ const stageName: Record<Stage, string> = {two: 'Compact', three: 'Full'}
 const notes: Record<ReferenceId, string> = {
   niki: 'Globynk recreated from the reel; Editeaze reinterpreted.',
   charles: 'Murmur and Pocket recreated from the reel; Timbre reinterpreted. Fonts are stand-ins.',
+  charles2: 'Heroes recreated from the reel with free Pexels photos. Fonts are stand-ins.',
 }
 
 export default function PalettePage() {
-  const [index, setIndex] = useState(0), [stage, setStage] = useState<Stage>('two'), [replay, setReplay] = useState(0), [tryOn, setTryOn] = useState(false), [tried, setTried] = useState<ShelfCombo | null>(null)
+  const [index, setIndex] = useState(0), [stage, setStage] = useState<Stage>('two'), [replay, setReplay] = useState(0), [tryOn, setTryOn] = useState(false), [tried, setTried] = useState<ShelfCombo | null>(null), [order, setOrder] = useState<PaletteOrder>('new')
   const touched = useRef(false), studiesRef = useRef<HTMLDivElement>(null), study = studies[index]
   const touch = () => { touched.current = true }
   const select = (i: number) => { touch(); setTried(null); setIndex((i + studies.length) % studies.length) }
@@ -50,9 +52,9 @@ export default function PalettePage() {
       <div className="pp-sources">{(Object.keys(references) as ReferenceId[]).map(id => <a key={id} className="source" href={references[id].url} target="_blank" rel="noreferrer">Reference · {references[id].creator}<ArrowUpRight size={14}/></a>)}</div>
     </div>
 
-    <Shelf tried={tried?.id} onTry={c => { setTried(c); setTryOn(true) }} onStudy={id => { select(studies.findIndex(s => s.id === id)); studiesRef.current?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}) }}/>
+    <Shelf order={order} onOrder={setOrder} tried={tried?.id} onTry={c => { setTried(c); setTryOn(true) }} onStudy={id => { select(studies.findIndex(s => s.id === id)); studiesRef.current?.scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'}) }}/>
 
-    <div ref={studiesRef} className="pp-anchor"><Picker index={index} stage={stage} onSelect={select}/></div>
+    <div ref={studiesRef} className="pp-anchor"><Picker index={index} stage={stage} order={order} onSelect={select}/></div>
 
     <div className="pp-toolbar">
       <span className="pp-live"><i/>Live <b>{pad(index + 1)} / {pad(studies.length)}</b>
@@ -81,7 +83,7 @@ export default function PalettePage() {
 
 /* ── Palette picker: grouped by reference, with one glider that slides to the selected card ── */
 
-function Picker({index, stage, onSelect}: {index: number, stage: Stage, onSelect: (i: number) => void}) {
+function Picker({index, stage, order, onSelect}: {index: number, stage: Stage, order: PaletteOrder, onSelect: (i: number) => void}) {
   const box = useRef<HTMLDivElement>(null), [glide, setGlide] = useState<CSSProperties>({opacity: 0})
   useLayoutEffect(() => {
     const root = box.current!
@@ -95,17 +97,19 @@ function Picker({index, stage, onSelect}: {index: number, stage: Stage, onSelect
     const observer = new ResizeObserver(measure)
     observer.observe(root)
     return () => observer.disconnect()
-  }, [index])
+  }, [index, order])
+  const groups = (Object.keys(references) as ReferenceId[]).sort((a, b) => byDate(order)(addedOn[a], addedOn[b]))
   return <div className="pp-picker" ref={box}>
     <span className="pp-glider" style={glide} aria-hidden="true"/>
-    {(Object.keys(references) as ReferenceId[]).map(ref => <section key={ref} className={`pp-group pp-group-${ref}`} aria-label={`Palettes from ${references[ref].creator}`}>
-      <header><span>{references[ref].creator}</span><small>{studies.filter(s => s.reference === ref).length} sites</small></header>
+    {groups.map(ref => { const count = studies.filter(s => s.reference === ref).length, age = paletteAge(addedOn[ref])
+      return <section key={ref} className={`pp-group pp-group-${ref}`} style={{'--n': count} as CSSProperties} aria-label={`Palettes from ${references[ref].creator}, added ${showDate(addedOn[ref])}`}>
+      <header><span>{references[ref].creator}</span><small>{count} sites</small><time dateTime={addedOn[ref]}>{showDate(addedOn[ref])}</time>{age && <em data-age={age}>{age}</em>}</header>
       <div className="pp-cards">{studies.map((s, i) => s.reference !== ref ? null : <button key={s.id} className="pp-card" aria-pressed={i === index} onClick={() => onSelect(i)}>
         <div className="pp-strip">{s.colors.map((c, j) => <i key={c.hex} style={{background: c.hex, flexGrow: j < 2 ? 1 : stage === 'three' ? .55 : .001}}/>)}</div>
         <span className="pp-card-row"><b>{s.site}</b><small>{pad(i + 1)}</small></span>
         <span className="pp-card-title">{s.title}</span>
       </button>)}</div>
-    </section>)}
+    </section> })}
   </div>
 }
 
