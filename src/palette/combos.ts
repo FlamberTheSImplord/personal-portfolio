@@ -25,6 +25,10 @@ const raw: Combo[] = [
   pair('Cherry Blossom', '#EFA8AC', 'Phthalo Green', '#00382E'),
   pair('Cream', '#FFFEC5', 'Dark Coffee', '#39241F'),
   ...studies.map(s => ({id: s.id, source: s.reference, study: s.id, colors: [...s.colors]})),
+  // pierredelcourr's colourways for the Base Club and Tennis designs. Raspberry Pink and Azure Navy are sampled:
+  // their printed labels don't match the colour shown. The accents are sampled too (labels too small to read).
+  {id: 'club-raspberry', source: 'pierre', colors: [{name: 'Raspberry Pink', hex: '#CD096B'}, {name: 'Mellow White', hex: '#FEFDFE'}, {name: 'Pastel Turquoise', hex: '#62FAC7'}]},
+  {id: 'tennis-azure', source: 'pierre', colors: [{name: 'Azure Navy', hex: '#044A88'}, {name: 'Snowy White', hex: '#FEFDFE'}, {name: 'Coral Red', hex: '#FE5F4C'}]},
 ]
 
 export const books = [

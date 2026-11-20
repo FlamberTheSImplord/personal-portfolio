@@ -96,11 +96,12 @@ function Picker({index, stage, order, onSelect}: {index: number, stage: Stage, o
     return () => observer.disconnect()
   }, [index, order])
   const groups = (Object.keys(references) as ReferenceId[]).sort((a, b) => byDate(order)(addedOn[a], addedOn[b]))
+  const activeRef = studies[index]?.reference
   return <div className="pp-picker" ref={box}>
     <span className="pp-glider" style={glide} aria-hidden="true"/>
     {groups.map(ref => { const count = studies.filter(s => s.reference === ref).length, age = paletteAge(addedOn[ref])
-      return <section key={ref} className={`pp-group pp-group-${ref}`} style={{'--n': count} as CSSProperties} aria-label={`Palettes from ${references[ref].creator}, added ${showDate(addedOn[ref])}`}>
-      <header><span>{references[ref].creator}</span><small>{count} sites</small><time dateTime={addedOn[ref]}>{showDate(addedOn[ref])}</time>{age && <em data-age={age}>{age}</em>}</header>
+      return <section key={ref} className={`pp-group pp-group-${ref}${ref === activeRef ? ' is-active' : ''}`} style={{'--n': count} as CSSProperties} aria-label={`Palettes from ${references[ref].creator}, added ${showDate(addedOn[ref])}`}>
+      <header><span>{references[ref].creator}</span><small>{count} {count === 1 ? 'site' : 'sites'}</small><time dateTime={addedOn[ref]}>{showDate(addedOn[ref])}</time>{age && <em data-age={age}>{age}</em>}</header>
       <div className="pp-cards">{studies.map((s, i) => s.reference !== ref ? null : <button key={s.id} className="pp-card" aria-pressed={i === index} onClick={() => onSelect(i)}>
         <div className="pp-strip">{s.colors.map((c, j) => <i key={c.hex} style={{background: c.hex, flexGrow: j < 2 ? 1 : stage === 'three' ? .55 : .001}}/>)}</div>
         <span className="pp-card-row"><b>{s.site}</b><small>{pad(i + 1)}</small></span>

@@ -100,6 +100,11 @@ const data = [
     colors: [{name: 'Sky Blue', hex: '#298BD0'}, {name: 'Cloud White', hex: '#F4F6FA'}, {name: 'Scarlet Red', hex: '#E5282F'}],
     canvas: {width: 1280, height: 908}, label: 'Recreation of the Tennis Academy hero', colorNote: 'HEX sampled from the reel because its swatch values are too small to read.',
   },
+  {
+    id: 'agency', reference: 'pierre', site: 'Bold Ideas', host: 'boldideas.studio', title: 'Creative branding',
+    colors: [{name: 'Deep Maroon', hex: '#250104'}, {name: 'Tomato Red', hex: '#D71A06'}, {name: 'Neon Yellow', hex: '#CDF73E'}],
+    canvas: {width: 1280, height: 720}, label: 'Recreation of a creative branding agency hero', colorNote: 'Neon Yellow is sampled from the reel because its label is too small to read.',
+  },
 ] as const satisfies readonly StudyData[]
 
 export type SceneId = typeof data[number]['id']

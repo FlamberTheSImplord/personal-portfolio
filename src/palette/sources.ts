@@ -8,6 +8,7 @@ export const sources = {
   charles2: {creator: 'charles.unemployed', url: 'https://www.instagram.com/reels/DfuhfgpRQxa/', added: '2026-11-18', note: 'Heroes recreated from the reel with free Pexels photos. Fonts are stand-ins.'},
   charles3: {creator: 'charles.unemployed', url: 'https://www.instagram.com/reels/DfzqwB3y0vS/', added: '2026-11-18', note: 'Heroes recreated from the reel with free Pexels photos and Blender renders, so imagery differs. Fonts are stand-ins.'},
   anthony: {creator: 'anthonyalxnder', url: 'https://www.instagram.com/reels/Df2ty9tSdaE/', added: '2026-11-18', note: 'Heroes recreated from designs shown in the reel, using free Pexels photos and Blender renders. Imagery differs and fonts are stand-ins.'},
+  pierre: {creator: 'pierredelcourr', url: 'https://www.instagram.com/reels/DfSrkxdzo5m/', added: '2026-11-20', note: 'Agency hero recreated with a free Pexels photo by Norma Mortenson. The Club and Tennis colourways from this reel are on the shelf.'},
 } as const satisfies Record<string, {creator: string, url: string, added: string, note?: string}>
 
 export type SourceId = keyof typeof sources
