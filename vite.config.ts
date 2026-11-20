@@ -5,6 +5,8 @@ import { join } from 'node:path'
 import { categories, resources, sources, purposes, stacks, prices } from './src/ui-library/resources'
 import { pages, llmsTxt, sitemapXml, site } from './src/seo/pages'
 import { paletteProblems } from './src/palette/check'
+import { rulesMd, rulesPath } from './src/ui-tips/rules'
+import { briefMd, briefPath } from './src/ai-brief/brief'
 
 // /ui-library.json: the UI Library directory as plain data, for search tools and AI agents.
 const directoryJson = () => JSON.stringify({categories, purposes, stacks, prices, sources, resources: resources.map(r => ({...r, category: categories.find(c => c.id === r.category)!.name, source: sources[r.via]}))}, null, 1)
@@ -18,6 +20,8 @@ const staticPages = (): Plugin => {
     configResolved(config) { outDir = config.build.outDir; serving = config.command === 'serve' },
     // Data check: a tag on more than a quarter of the library stops narrowing anything, so split it.
     buildStart() {
+      // UI rules for AI tools: a real file in public/, so the repo and GitHub hold the same copy as the live site.
+      mkdirSync('public/ui-tips', {recursive: true}); writeFileSync(`public${rulesPath}`, rulesMd()); writeFileSync(`public${briefPath}`, briefMd())
       const problems = paletteProblems(readdirSync('src/palette/scenes'))
       for (const file of readdirSync('src/palette/scene-kit/layers')) {
         const scene = file.replace('.json', ''), manifest = JSON.parse(readFileSync(`src/palette/scene-kit/layers/${file}`, 'utf8'))
@@ -36,7 +40,7 @@ const staticPages = (): Plugin => {
       }
     },
     configureServer(server) {
-      const files: Record<string, [string, () => string]> = {'/ui-library.json': ['application/json', directoryJson], '/llms.txt': ['text/plain', llmsTxt], '/sitemap.xml': ['application/xml', sitemapXml]}
+      const files: Record<string, [string, () => string]> = {'/ui-library.json': ['application/json', directoryJson], '/llms.txt': ['text/plain', llmsTxt], '/sitemap.xml': ['application/xml', sitemapXml], [rulesPath]: ['text/markdown; charset=utf-8', rulesMd], [briefPath]: ['text/markdown; charset=utf-8', briefMd]}
       // Private reference frames for the palette overlay. They stay in .claude and are never built.
       server.middlewares.use('/__palette-ref', (req, res, next) => {
         const name = (req.url ?? '').split('?')[0].replace(/^\//, ''), file = join('.claude/palette-refs', name)

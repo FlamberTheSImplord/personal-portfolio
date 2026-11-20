@@ -1,0 +1,42 @@
+/* AI brief page: the library brief rendered as a document, with a section rail. Prefix aib-. */
+.aib-bar{display:flex;align-items:center;gap:12px;margin:-14px 0 22px}
+.aib-view{display:flex;padding:3px;border-radius:9px;background:rgb(20 30 50 / .05)}
+.aib-view button{border:0;background:transparent;border-radius:7px;padding:6px 12px;font:inherit;font-size:12px;color:#5d6574;cursor:pointer}
+.aib-view button[aria-pressed=true]{background:#fff;color:#20242d;box-shadow:0 1px 2px rgb(20 30 50 / .08)}
+.aib-size{font-size:12px;color:#7d8696;font-variant-numeric:tabular-nums}
+.aib-file{display:flex;align-items:center;gap:4px;margin-left:auto;font-size:12px;color:#20242d;border:1px solid rgb(20 30 50 / .1);border-radius:8px;padding:6px 10px;background:#fff;text-decoration:none}
+.aib-copy{display:flex;align-items:center;gap:6px;float:right;margin:2px 0 0 12px;border:1px solid rgb(20 30 50 / .1);background:#fff;border-radius:7px;padding:5px 9px;font:inherit;font-size:11px;color:#3a4150;cursor:pointer}
+.aib-copy:hover{background:#f4f6f9}
+.aib-view button:focus-visible,.aib-copy:focus-visible,.aib-file:focus-visible,.aib-rail a:focus-visible{outline:2px solid var(--blue,#2856e9);outline-offset:2px}
+.aib-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:24px;align-items:start}
+.aib-rail{position:sticky;top:20px;display:flex;flex-direction:column;gap:2px;padding:6px;border-radius:14px;background:rgb(20 30 50 / .025);border:1px solid rgb(20 30 50 / .06)}
+.aib-rail a{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;border-radius:8px;font-size:13px;color:#3a4150;text-decoration:none}
+.aib-rail a:hover{background:#fff}
+.aib-rail small{font-size:11px;color:#8b93a0;font-variant-numeric:tabular-nums}
+.aib-doc{min-width:0;max-width:820px}
+.aib-intro blockquote{margin:0 0 14px;padding:12px 16px;border-radius:12px;background:#fff;border:1px solid rgb(20 30 50 / .07);font-size:13px;line-height:1.6;color:#3a4150}
+.aib-section{scroll-margin-top:20px;padding:18px 20px;margin-bottom:14px;border-radius:14px;background:#fff;border:1px solid rgb(20 30 50 / .07)}
+.aib-section h2{font-size:18px;letter-spacing:-.4px;margin:0 0 10px}
+.aib-section h3{font-size:14px;margin:18px 0 6px;color:#20242d}
+.aib-section h4{font-size:13px;margin:14px 0 4px;color:#20242d}
+.aib-section p,.aib-section li{font-size:13px;line-height:1.65;color:#3a4150}
+.aib-section p{margin:4px 0}
+.aib-section ul,.aib-section ol{margin:4px 0 8px;padding-left:20px}
+.aib-section a{color:var(--blue,#2856e9)}
+.aib-section code,.aib-raw code{font:12px ui-monospace,monospace;background:#f2f4f7;border-radius:4px;padding:1px 4px}
+.aib-hex{display:inline-flex;align-items:center;gap:4px;font:12px ui-monospace,monospace;white-space:nowrap}
+.aib-hex i{width:11px;height:11px;border-radius:3px;border:1px solid rgb(0 0 0 / .12)}
+.aib-raw{padding:14px;border-radius:14px;background:#fff;border:1px solid rgb(20 30 50 / .07)}
+.aib-raw pre{margin:0;white-space:pre-wrap;word-break:break-word;font:12px/1.6 ui-monospace,monospace;color:#20242d}
+.aib-loading{display:grid;gap:10px}.aib-loading i{height:90px;border-radius:14px;background:rgb(20 30 50 / .05)}
+.aib-error{font-size:13px;color:#a33}
+@media(max-width:800px){
+ .aib-layout{grid-template-columns:1fr}
+ .aib-rail{position:static;flex-direction:row;overflow-x:auto;scrollbar-width:none}
+ .aib-rail a{flex:0 0 auto;gap:6px}
+ .aib-section{padding:14px}
+ .aib-bar{flex-wrap:wrap}
+}
+.aib-pointer{display:grid;gap:6px;margin:0 0 14px;padding:12px 16px;border-radius:12px;border:1px dashed rgb(20 30 50 / .18)}
+.aib-pointer span{font-size:11px;letter-spacing:.6px;text-transform:uppercase;color:#7d8696}
+.aib-pointer code{font:12px/1.6 ui-monospace,monospace;color:#20242d;white-space:normal}

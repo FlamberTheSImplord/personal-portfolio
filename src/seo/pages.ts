@@ -9,12 +9,16 @@ import {reelStudies} from '../ui-tips/reel-data'
 import {presets as playPresets} from '../playground/presets'
 import {heroStudies} from '../ui-tips/hero-studies/studies'
 
-export const site = 'https://personal-portfolio-library.vercel.app'
+import {site} from './site'
+export {site}
 export type PageDoc = {path: string, name: string, title: string, description: string, body: string}
 
 const esc = (s: string) => s.replace(/[&<>"]/g, c => ({'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;'})[c]!)
 const link = (href: string, text: string) => `<a href="${esc(href)}">${esc(text)}</a>`
 const list = (items: string[]) => `<ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>`
+
+/** Web designs on the site, one line each. Also listed in the AI brief. */
+export const webDesignList = ['Fluento · Dashboard V15 and Word library', 'Ember · Projects dashboard', 'Code XR · Admin Dashboard V2 (overview, finance, moderation, announcements)', 'Fintrack · working budget dashboard (drag-and-drop budget board, transactions, goals, summary), after yasrinoori', 'Altaval · ski resort landing page (snow report, piste map, ski school, stays, pass builder), hero after charles.unemployed', 'Kiln Coffee · roaster landing page (shop, roast dial, subscription builder, roast curve), hero after charles.unemployed', 'Merrow Botanic Garden · orchid show landing page (events, species, glasshouses, tickets, membership), hero after charles.unemployed']
 
 const docs: Omit<PageDoc, 'body'>[] = [
   {path: '/', name: 'Portfolio', title: 'Nik Danish — Design Library', description: "Nik Danish's portfolio and personal collection of colour, motion and interface studies."},
@@ -23,6 +27,7 @@ const docs: Omit<PageDoc, 'body'>[] = [
   {path: '/alignment/', name: 'Text alignment', title: 'Text alignment — Nik Danish', description: 'A product-card study in alignment, grouping and a clearer reading path.'},
   {path: '/web-designs/', name: 'Web designs', title: 'Web designs — Nik Danish', description: 'Dashboard and website recreations from design reels, shown in browser windows, including a working budget dashboard and three full landing pages.'},
   {path: '/ui-tips/', name: 'UI Designs and Tips', title: 'UI design notes — Nik Danish', description: 'Searchable UI tips, UX laws, hero layout studies and before/after form and paywall studies.'},
+  {path: '/ai-brief/', name: 'AI brief', title: 'AI brief — Nik Danish', description: 'The design library brief an AI assistant reads before building UI: rules, palettes, UI Library resources and web designs.'},
   {path: '/ui-library/', name: 'UI Library', title: 'UI Library — Nik Danish', description: `${resources.length} UI resources in ${categories.length} categories: animated components, component kits, CSS snippets, 3D, specialty tools, inspiration, colour tools and design beyond UI.`},
 ]
 
@@ -32,9 +37,10 @@ const bodies: Record<string, () => string> = {
   '/playground/': () => `<p>Pick a palette, then a style, motion and icon set sampled from UI Library entries. Look-alikes are labelled and link to their library.</p>`
     + list(playPresets.map(p => `${esc(p.name)} (${p.kind}, from ${esc(resources.find(r => r.id === p.library)?.name ?? p.library)})`)),
   '/alignment/': () => `<p>Switch between centered and left-aligned product-card compositions to compare how the eye reads them.</p>`,
-  '/web-designs/': () => list(['Fluento · Dashboard V15 and Word library', 'Ember · Projects dashboard', 'Code XR · Admin Dashboard V2 (overview, finance, moderation, announcements)', 'Fintrack · working budget dashboard (drag-and-drop budget board, transactions, goals, summary), after yasrinoori', 'Altaval · ski resort landing page (snow report, piste map, ski school, stays, pass builder), hero after charles.unemployed', 'Kiln Coffee · roaster landing page (shop, roast dial, subscription builder, roast curve), hero after charles.unemployed', 'Merrow Botanic Garden · orchid show landing page (events, species, glasshouses, tickets, membership), hero after charles.unemployed'].map(esc)),
+  '/web-designs/': () => list(webDesignList.map(esc)),
   '/ui-tips/': () => reelStudies.map(r => `<h2>${esc(r.title)}</h2><p>Reference: ${link(r.url, r.author)}</p>${list(r.tips.map(t => `${esc(t.title)}: ${esc(t.do)}`))}`).join('')
-    + `<h2>Hero studies</h2>${list(heroStudies.map(h => `${esc(h.name)}: ${esc(h.subtitle)}`))}`,
+    + `<h2>Hero studies</h2>${list(heroStudies.map(h => `${esc(h.name)}: ${esc(h.subtitle)}`))}<p>For AI tools: ${link('/ui-tips/rules.md', 'rules.md')}</p>`,
+  '/ai-brief/': () => `<p>Read the brief as plain Markdown: ${link('/library.md', 'library.md')}. It holds every UI rule, colour palette, UI Library resource and web design on this site.</p>`,
   '/ui-library/': () => categories.map(c => `<h2>${esc(c.name)}</h2><p>${esc(c.line)}</p>${list(resources.filter(r => r.category === c.id).map(r =>
     `${link(r.url.startsWith('/') ? site + r.url : r.url, r.name)}${r.pick ? ' (pick)' : ''}: ${esc(r.summary)} Inside: ${esc(r.inside.join(', '))}. Tags: ${esc(r.purpose.join(', '))}.${r.stack.length ? ` Stack: ${esc(r.stack.join(', '))}.` : ''} Use: ${esc(r.use)}. Price: ${r.price}.${r.similar?.length ? ` Similar to: ${esc(r.similar.map(id => resources.find(x => x.id === id)!.name).join(', '))}.` : ''} Link checked: ${r.checked}. Source: ${sources[r.via].url ? link(sources[r.via].url!, sources[r.via].label) : esc(sources[r.via].label)}.`))}`).join('')
     + `<h2>Studies</h2>${list(libraries.filter(l => l.ready).map(l => `${link(`${site}/ui-library/?showcase=${l.id}`, l.concept)}: website concept built with ${esc(l.name)}.`))}`
@@ -52,6 +58,8 @@ export const llmsTxt = () => `# Nik Danish — Design Library
 ${pages.map(p => `- [${p.name}](${site}${p.path}): ${p.description}`).join('\n')}
 
 ## Data
+- [Design library brief](${site}/library.md): start here. One Markdown file with every UI rule, colour palette, UI Library resource and web design, plus how to use them. Read this before building or reviewing UI.
+- [UI rules](${site}/ui-tips/rules.md): every UI tip as an actionable rule (when, do, avoid, values, check). Read this before building or reviewing UI.
 - [UI Library directory](${site}/ui-library.json): all ${resources.length} resources with category, summary, tags, stack, how to use it, price, pick, similar resources, link-check date and source.
 
 ## UI Library filters
