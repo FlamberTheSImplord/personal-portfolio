@@ -1,7 +1,12 @@
 import type {Tip} from './reel-data'
+import PlacePhone from './PlacePhone'
+import HackSketch from './HackSketch'
+
+/** Tips drawn as a working phone instead of a paper sketch. */
+export const phoneKinds=['carry','back','menu']
 
 /** Small, static study drawings; the source labels live in reel-data.ts. */
-export default function TipSketch({tip,good=false}:{tip:Tip;good?:boolean}) {
+export default function TipSketch({tip,good=false,cover=false}:{tip:Tip;good?:boolean;cover?:boolean}) {
  const kind=tip.sketch
  const lines=<div className="rs-lines"><i/><i/><i/></div>
  const card=(label:string)=><div className="rs-draw-card"><span>{label}</span>{lines}</div>
@@ -27,7 +32,10 @@ export default function TipSketch({tip,good=false}:{tip:Tip;good?:boolean}) {
  case 'jakob':drawing=<div className="rs-jakob-study"><div className="rs-mini-nav">Loopdesk <span>{good?'⌕ Search':'◎ ◇ ⊕'}</span></div><div className="rs-nav-body"><aside>{(good?['Home','Projects','Tasks','Settings']:['Orbit','Launchpad','Portal','Deck']).map(t=><span key={t}>{t}</span>)}</aside><div>{lines}{lines}</div></div></div>;break
  case 'miller':drawing=<div className="rs-miller-study"><strong>Workspace</strong><div>{(good?['Work','Projects','Tasks','Team','People','Settings']:['Home','Inbox','Projects','Tasks','Docs','Calendar','Goals','Reports','Team','Clients','Files','Billing','Integrations','Settings','Help']).map((t,i)=><span key={t} className={good&&(i===0||i===3)?'rs-nav-group':''}>{t}</span>)}</div></div>;break
  case 'restorff':drawing=<div className="rs-restorff-study"><strong>Ready to share?</strong>{lines}<div>{['New!','Share','Export','Invite!','Try AI'].map((t,i)=><span key={t} className={good&&i===1?'rs-primary':''}>{t}</span>)}</div></div>;break
+ case 'nested':case 'alpha':case 'oklch':case 'okgrad':case 'stroke':case 'fade':case 'swap':case 'darkdepth':case 'dvh':case 'multiply':drawing=<HackSketch kind={kind} good={good}/>;break
+ case 'carry':case 'back':case 'menu':drawing=<div><PlacePhone mode={good?'carry':'cut'} focus={({carry:'open',back:'back',menu:'menu'} as const)[kind as 'carry']} live={!cover} start={cover?(kind==='menu'?'menu':kind==='back'?'grid':'page'):kind==='back'?'page':'grid'} hint={{carry:'Tap a card',back:'Tap back',menu:'Tap ☰'}[kind]}/></div>;break
  default:drawing=<div className="rs-copy-study"><strong>{good?'Make it clear.':'Too much noise.'}</strong>{lines}</div>
  }
- return <div className={`rs-sketch ${good?'rs-good':'rs-bad'} rs-kind-${kind}`} role="img" aria-label={`${good?'Do instead':'Don’t'}: ${good?tip.do:tip.dont}`}>{drawing}<svg className="rs-sketch-mark" viewBox="0 0 300 230" preserveAspectRatio="none" aria-hidden="true"><path d={good?'M34 204 Q145 213 270 199 M246 191 L271 199 L253 210':'M24 32 Q10 105 26 198 M26 198 Q150 215 276 193 M273 193 Q290 98 272 32'}/></svg></div>
+ const phone=phoneKinds.includes(kind)
+ return <div className={`rs-sketch ${good?'rs-good':'rs-bad'} rs-kind-${kind} ${phone?'rs-phone-sketch':''}`} role={phone&&!cover?'group':'img'} aria-label={`${good?'Do instead':'Don’t'}: ${good?tip.do:tip.dont}`}>{drawing}{!phone&&<svg className="rs-sketch-mark" viewBox="0 0 300 230" preserveAspectRatio="none" aria-hidden="true"><path d={good?'M34 204 Q145 213 270 199 M246 191 L271 199 L253 210':'M24 32 Q10 105 26 198 M26 198 Q150 215 276 193 M273 193 Q290 98 272 32'}/></svg>}</div>
 }

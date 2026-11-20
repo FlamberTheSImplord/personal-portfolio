@@ -1,0 +1,61 @@
+/* Sense-of-place phone: a shop where cards carry into pages and the menu grows from its button. */
+.sop-phone{box-sizing:border-box;--sop-ease:cubic-bezier(.2,.75,.2,1);--sop-blue:#2f5bff;position:relative;height:92%;aspect-ratio:9/19;margin:auto;background:#111214;border-radius:22px;padding:5px;box-shadow:0 10px 24px #1d1f2224;flex-shrink:0;font-family:system-ui,sans-serif}
+.sop-island{position:absolute;top:10px;left:50%;width:30%;height:9px;border-radius:6px;background:#000;transform:translateX(-50%);z-index:6}
+.sop-screen{position:relative;height:100%;border-radius:17px;overflow:hidden;background:#f3f3f1;color:#17181b;padding:24px 8px 8px}
+.sop-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sop-logo{display:flex;align-items:center;gap:4px;font-size:10px;font-weight:600}
+.sop-logo i{width:8px;height:8px;border:1.5px solid currentColor;border-radius:50%}
+.sop-menu-button{width:20px;height:20px;border-radius:50%;border:1px solid #d6d7da;background:#fff;display:grid;place-content:center;gap:2px;padding:0;cursor:pointer}
+.sop-menu-button i{display:block;width:8px;height:1.5px;background:#17181b}
+.sop-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.sop-card{display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:0;background:none;padding:0;text-align:left;cursor:pointer;color:inherit;border-radius:6px}
+.sop-card-art,.sop-related>span{display:block;width:100%;aspect-ratio:1;border-radius:6px;background:#e3e4e6}
+.sop-card b{font-size:8px;margin-top:4px}.sop-card small{font-size:7px;color:#8a8d93}
+.sop-dark{background:#17181b!important}
+.sop-card svg,.sop-page-art svg,.sop-related svg{width:100%;height:100%;display:block}
+.sop-card:focus-visible,.sop-menu-button:focus-visible,.sop-back:focus-visible,.sop-menu button:focus-visible{outline:2px solid var(--sop-blue);outline-offset:2px}
+.sop-page{position:absolute;top:0;left:0;width:100%;height:100%;background:#f3f3f1;overflow:hidden;z-index:3;display:flex;flex-direction:column}
+.sop-carry .sop-page{transition:top .36s var(--sop-ease),left .36s var(--sop-ease),width .36s var(--sop-ease),height .36s var(--sop-ease),border-radius .36s var(--sop-ease)}
+.sop-page-art{position:relative;flex:0 0 46%;background:#e3e4e6;display:grid;place-items:center;padding-top:14px;transition:flex-basis .36s var(--sop-ease),padding .36s var(--sop-ease)}
+.sop-page-art svg{width:72%;height:auto}
+.sop-page-small .sop-page-art{flex-basis:76%;padding-top:0;border-radius:6px}
+.sop-back{position:absolute;top:22px;left:8px;width:20px;height:20px;border-radius:50%;border:0;background:#ffffffd9;color:#17181b;display:grid;place-items:center;padding:0;cursor:pointer;transition:opacity .2s}
+.sop-page-small .sop-back,.sop-page-small .sop-bag,.sop-page-small p,.sop-page-small .sop-related{opacity:0}
+.sop-page-info{padding:8px;display:flex;flex-direction:column;gap:2px}
+.sop-page-info>b{font-size:13px;transition:font-size .36s var(--sop-ease)}.sop-page-small .sop-page-info>b{font-size:8px}
+.sop-page-info>small{font-size:7px;color:#8a8d93}
+.sop-bag,.sop-page-info p,.sop-related{transition:opacity .2s .16s}
+.sop-page-small .sop-bag,.sop-page-small p,.sop-page-small .sop-related{transition-delay:0s}
+.sop-bag{display:grid;place-items:center;background:#17181b;color:#fff;border-radius:999px;font-size:8px;height:20px;margin:6px 0}
+.sop-phone .sop-page-info p{min-height:0;font-size:7px;color:#5e6168;line-height:1.5;margin:2px 0 6px;border-top:1px solid #e1e2e4;padding-top:6px}
+.sop-related{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.sop-menu{position:absolute;top:20px;right:6px;width:68%;background:#17181b;color:#fff;border-radius:10px;padding:22px 10px 8px;z-index:4;display:flex;flex-direction:column;gap:2px;transform-origin:calc(100% - 12px) 12px}
+.sop-carry .sop-menu{opacity:0;transform:scale(.25);transition:transform .22s var(--sop-ease),opacity .18s}
+.sop-carry .sop-menu.sop-menu-open{opacity:1;transform:none}
+.sop-menu button{border:0;background:none;color:#cfd0d4;font:500 13px/1.5 system-ui,sans-serif;letter-spacing:-.3px;text-align:left;padding:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer}
+.sop-menu button:nth-child(2){color:#fff}
+.sop-menu button i{width:8px;height:8px;border-radius:50%;background:var(--sop-blue)}
+.sop-menu .sop-menu-close{position:absolute;top:7px;right:8px;color:#fff}
+.sop-tap{position:absolute;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:var(--sop-blue);box-shadow:0 0 0 4px #2f5bff40;pointer-events:none;z-index:8;animation:sop-tap .45s ease-out forwards}
+@keyframes sop-tap{from{transform:scale(.5);opacity:1}to{transform:scale(1.15);opacity:0}}
+.sop-hint{position:absolute;left:50%;bottom:9%;transform:translateX(-50%);background:#17181be6;color:#fff;font-size:9px;padding:4px 9px;border-radius:999px;white-space:nowrap;pointer-events:none;z-index:9}
+/* Reduced motion: no growing, a short fade instead. */
+.sop-reduced .sop-page,.sop-reduced .sop-page-art,.sop-reduced .sop-menu{transition:opacity .15s!important}
+.sop-reduced.sop-carry .sop-menu{transform:none}
+.sop-reduced.sop-carry .sop-page{animation:sop-fade .15s}
+.sop-page-fading{opacity:0}
+@keyframes sop-fade{from{opacity:0}}
+@media(prefers-reduced-motion:reduce){.sop-tap{animation-duration:.01s}}
+/* Inside the reel study: a taller paper so the phone reads at a useful size. */
+.rs-sketch.rs-phone-sketch>div{position:absolute;inset:0;padding:0;display:flex;align-items:center;justify-content:center}
+.rs-comparison .rs-sketch.rs-phone-sketch{aspect-ratio:.95}
+
+/* Cover: the full-size phone scaled as one piece{position:absolute;top:50%;left:50%;width:180px;height:380px;aspect-ratio:auto;margin:0;translate:-50% -46%;scale:.3}
+
+@media(max-width:700px){.rs-comparison.rs-comparison-phone{grid-template-columns:1fr}.rs-comparison-phone .rs-pair-arrow{display:none}.rs-comparison .rs-sketch.rs-phone-sketch{aspect-ratio:.95}}
+/* One action per tip: the others are off, and the target pulses until the first tap. */
+.sop-card:disabled,.sop-menu-button:disabled{cursor:default}
+.sop-card:disabled{opacity:.45}.sop-menu-button:disabled{opacity:.35}
+.sop-target{box-shadow:0 0 0 2px var(--sop-blue);animation:sop-pulse 1.6s ease-in-out infinite}
+@keyframes sop-pulse{50%{box-shadow:0 0 0 5px #2f5bff38}}
+@media(prefers-reduced-motion:reduce){.sop-target{animation:none}}

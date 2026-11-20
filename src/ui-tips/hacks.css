@@ -1,0 +1,45 @@
+/* Live demos for the "10 niche design hacks" study. Each sits inside a .rs-sketch paper. */
+.hk{align-items:center;gap:12px;font-family:system-ui,sans-serif}
+.hk small{font:500 11px/1.2 ui-monospace,monospace;color:#7b8a7c}
+.hk-nested .hk-outer{width:70%;height:58%;border-radius:24px;background:#485d45;padding:10px}
+.hk-nested .hk-inner{width:100%;height:100%;background:#eef0e7}
+.hk-alpha{flex-direction:row!important;gap:0!important;padding:0!important}
+.hk-alpha>div{flex:1;height:100%;display:grid;place-items:center}
+.hk-alpha span{padding:20px 26px;border-radius:8px;font-size:14px;color:inherit;background:rgb(255 255 255 / .06)}
+.hk-alpha>div+div span{color:#fff}
+.hk-swatches{flex-direction:row!important;flex-wrap:wrap;justify-content:center;align-content:center}
+.hk-swatches i{width:19%;aspect-ratio:1;border-radius:8px}
+.hk-swatches small{width:100%;text-align:center}
+.hk-grad i{width:86%;height:44%;border-radius:10px}
+.hk-stroke{align-items:flex-start!important;gap:16px}
+.hk-stroke span{display:flex;align-items:center;gap:10px;font-size:17px;color:#2c3a2e}
+.hk-stroke b{font-size:24px;font-weight:800}
+.hk-fade{padding:22px 0!important}
+.hk-fade>div{display:flex;gap:10px;width:100%;overflow:hidden;padding-left:12%}
+.hk-fade i{flex:0 0 32%;height:110px;border-radius:8px;background:#dfe5da}
+.hk-fade i:nth-child(2n){background:#cfd9cb}
+.hk-faded>div{-webkit-mask-image:linear-gradient(90deg,transparent,#000 15% 85%,transparent);mask-image:linear-gradient(90deg,transparent,#000 15% 85%,transparent)}
+.hk-icons{position:relative;display:grid;place-items:center;width:72px;height:72px;border-radius:16px;background:#2c3a2e;color:#fff}
+.hk-icons svg{position:absolute;animation:hk-swap 2.8s steps(1) infinite}
+.hk-icons .hk-b{animation-name:hk-swap-b}
+.hk-swap-blur .hk-icons svg{animation-timing-function:ease-in-out;animation-name:hk-blur}
+.hk-swap-blur .hk-icons .hk-b{animation-name:hk-blur-b}
+@keyframes hk-swap{0%,50%{opacity:1}50.01%,100%{opacity:0}}
+@keyframes hk-swap-b{0%,50%{opacity:0}50.01%,100%{opacity:1}}
+@keyframes hk-blur{0%,40%{opacity:1;filter:blur(0);scale:1}50%,90%{opacity:0;filter:blur(4px);scale:.8}100%{opacity:1;filter:blur(0);scale:1}}
+@keyframes hk-blur-b{0%,40%{opacity:0;filter:blur(4px);scale:.8}50%,90%{opacity:1;filter:blur(0);scale:1}100%{opacity:0;filter:blur(4px);scale:.8}}
+.hk-dark{background:#101113;padding:26px!important}
+.hk-dark div{width:100%;height:100%;padding:14px;border-radius:12px;background:#101113;box-shadow:0 8px 20px #0008}
+.hk-dark-good div{box-shadow:none;background:#1b1d21}
+.hk-dark-good div div{background:#26292e}
+.hk-dark-good div div div{background:#33363c}
+.hk-dvh .hk-phone{position:relative;width:34%;height:86%;border:3px solid #2c3a2e;border-radius:16px;overflow:hidden;background:#eef0e7}
+.hk-dvh .hk-hero{position:absolute;inset:0 0 auto;height:118%;display:flex;align-items:flex-end;padding:8px;background:linear-gradient(#cfd9cb,#eef0e7)}
+.hk-dvh-good .hk-hero{height:calc(100% - 26px)}
+.hk-dvh .hk-hero b{width:100%;padding:7px 0;border-radius:6px;background:#485d45;color:#fff;font:600 10px system-ui;text-align:center}
+.hk-dvh .hk-bar{position:absolute;inset:auto 0 0;height:26px;background:#dcdcd8;border-top:1px solid #c4c4c0}
+.hk-multiply{flex-direction:row!important;background:#efe2cf;gap:16px}
+.hk-multiply svg{width:34%;height:auto;border-radius:2px}
+.hk-blend svg{mix-blend-mode:multiply}
+.hk-multiply span{font-size:14px;color:#4b3a28;line-height:1.5}
+@media(prefers-reduced-motion:reduce){.hk-icons svg{animation:none}.hk-icons .hk-b{opacity:0}}

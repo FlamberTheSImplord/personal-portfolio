@@ -4,37 +4,18 @@ import './ui-tips.css'
 import HeroStudies from './hero-studies/HeroStudies'
 import { AnnotatedPreview, SketchBreakdown, getSketchNotes } from './SketchNotes'
 import { TipTags, matchesSearch, studyTags, heroTags, hasAnyTag } from './tip-search'
-import ReelStudies, {reelTags, reelVisible} from './ReelStudies'
+import ReelTiles, {reelTags, tipVisible} from './ReelStudies'
 import { heroMatches } from './hero-studies/HeroStudies'
 import { FacetFilter, ActiveFilters, useSlashFocus, SlashHint, readList } from '../filters/Filters'
 import { suggest } from '../filters/suggest'
-import { Tabs, TabList, Tab } from '../../vendor/boardui/components/base/tabs/tabs'
 import '../ui-library/boardui/components.css'
-import {reelStudies} from './reel-data'
-import {heroStudies} from './hero-studies/studies'
+import {reelStudies, type ReelStudy} from './reel-data'
+import {heroStudies, heroReference} from './hero-studies/studies'
 import './reel-studies.css'
+import './pinboard.css'
 
 type Study = 'forms' | 'paywall'
-const references = {
- forms: 'https://www.instagram.com/reels/Db8J5z5Oy8-/',
- paywall: 'https://www.instagram.com/p/DfPJktslgBZ/?img_index=8',
-}
-const paywallSteps = [
- { title:'The original', note:"A generic headline, checklist, and three plans." },
- { title:'01 · The headline', note:"Lead with the habit outcome." },
- { title:'02 · The hero', note:"Show the habit grid." },
- { title:'03 · The benefits', note:"Three icons. Three short benefits." },
- { title:'04 · The plans', note:"Two plans. Clear savings and billing." },
- { title:'05 · The colours', note:"Deep green, cream, and more space." },
-]
-const formSteps = [
- { title:'The original', note:"Dense fields and repeated instructions." },
- { title:'01 · Spacing', note:"Use a consistent gap between fields." },
- { title:'02 · Persistent labels', note:"Keep labels visible after entry." },
- { title:'03 · Control shape', note:"Match field and button shapes." },
- { title:'04 · Focused entry', note:"Use numeric input. Try Account number." },
- { title:'05 · The result', note:"A clear title, labels, and next action." },
-]
+import {references, paywallSteps, formSteps} from './study-steps'
 
 function FormPreview({stage=5, miniature=false}:{stage?:number;miniature?:boolean}) {
  const [details,setDetails]=useState({account:'',sort:'',first:'',last:''})
@@ -92,12 +73,13 @@ function StudyDetail({study}:{study:Study}) {
  const isForm=study==='forms',steps=isForm?formSteps:paywallSteps
  return <><div className="ut-detail-controls"><div className="ut-before-after" aria-label="Comparison"><button aria-pressed={stage===0} onClick={()=>chooseStage(0)}>Before</button><button aria-pressed={stage===5} onClick={()=>chooseStage(5)}>After</button></div><button className="ut-playback" aria-label={playing?'Pause animation':'Play animation'} aria-pressed={playing} disabled={reduced} onClick={()=>setPlaying(p=>!p)}>{playing?<Pause size={13}/>:<Play size={13}/>}<span>{reduced?'Reduced motion':playing?'Auto-playing':'Play changes'}</span></button><a href={references[study]} target="_blank" rel="noreferrer">View reference <ArrowUpRight size={13}/></a></div><div className={`ut-detail-layout ${isForm?'ut-form-study':'ut-paywall-study'}`}><div className="ut-demo-stage"><div className="ut-auto-progress" aria-hidden="true"><i key={`${stage}-${playing}-${hidden}`} style={{animationDuration:`${duration}ms`,animationPlayState:playing&&!hidden&&!reduced?'running':'paused'}}/></div><span className="ut-demo-label">{stage===0?'Before':stage===5?'After':`Improvement ${stage} of 5`}</span><div className="ut-phone-stage ut-stage-jump" key={stage} onFocusCapture={()=>setPlaying(false)} onPointerDownCapture={()=>setPlaying(false)}><AnnotatedPreview study={study} stage={stage}>{isForm?<FormPreview key={`form-${stage}`} stage={stage}/>:<PaywallPreview key={`paywall-${stage}`} stage={stage}/>}</AnnotatedPreview></div></div><aside className="ut-explanation"><span className="eyebrow">Study notes</span><h3>{isForm?'Better forms.':'Better paywalls.'}</h3><div className="ut-step-buttons" aria-label="Improvement stages">{steps.map((step,index)=><button key={step.title} aria-pressed={stage===index} onClick={()=>chooseStage(index)}><span>{index===0?'–':String(index).padStart(2,'0')}</span>{step.title.replace(/^\d+ · /,'')}<ChevronRight size={14}/></button>)}</div><div className="ut-step-note" aria-live={playing?'off':'polite'}><Lightbulb size={19}/><div><h4>{steps[stage].title}</h4><p>{steps[stage].note}</p></div></div><SketchBreakdown study={study} stage={stage}/><div className="ut-step-navigation"><button onClick={()=>chooseStage(Math.max(0,stage-1))} disabled={stage===0}><ArrowLeft size={14}/>Previous</button><button onClick={()=>chooseStage(Math.min(5,stage+1))} disabled={stage===5}>Next<ArrowRight size={14}/></button></div><p className="ut-demo-note">Sample data. Layouts recreated; fine details approximate.</p></aside></div></>
 }
-type Section='all'|'reels'|'studies'|'heroes'
-const sections:{id:Section,name:string}[]=[{id:'all',name:'All'},{id:'reels',name:'Reel studies'},{id:'studies',name:'Before → After'},{id:'heroes',name:'Hero layouts'}]
+// Board filter: everything, one reel, the before → after studies or the hero layouts. "reels" (old links) = every reel.
+type Section='all'|'reels'|'studies'|'heroes'|(typeof reelStudies)[number]['id']
+const sectionIds=['all','reels','studies','heroes',...reelStudies.map(r=>r.id)]
 const forms=['forms','paywall'] as const
 // Every tag used on the page, most used first; the Tag filter and the "Try" suggestions read from this.
 const allTags=(()=>{const n=new Map<string,number>();[...reelStudies.flatMap(reelTags),...forms.flatMap(f=>studyTags[f]),...heroStudies.flatMap(h=>heroTags[h.id])].forEach(t=>n.set(t,(n.get(t)??0)+1));return [...n].sort((a,b)=>b[1]-a[1]).map(([t])=>t)})()
-const readTips=(p=new URLSearchParams(location.search))=>({query:p.get('q')??'',tags:readList(p,'tag',allTags),section:(sections.some(s=>s.id===p.get('section'))?p.get('section'):'all') as Section})
+const readTips=(p=new URLSearchParams(location.search))=>({query:p.get('q')??'',tags:readList(p,'tag',allTags),section:(sectionIds.includes(p.get('section')??'')?p.get('section'):'all') as Section})
 
 export default function UiTips(){
  const [query,setQuery]=useState(()=>readTips().query)
@@ -111,29 +93,41 @@ export default function UiTips(){
  useEffect(()=>{if(!location.pathname.startsWith('/ui-tips'))return;const p=new URLSearchParams();if(query)p.set('q',query);if(tags.length)p.set('tag',tags.join(','));if(section!=='all')p.set('section',section);history.replaceState(null,'',`/ui-tips/${p.size?`?${p}`:''}`)},[query,tags,section])
  const toggleTag=(t:string)=>setTags(list=>list.includes(t)?list.filter(x=>x!==t):[...list,t])
  const formMatches=(study:Study,q=query,t=tags)=>hasAnyTag(studyTags[study],t)&&matchesSearch(q,study,studyTags[study],(study==='forms'?formSteps:paywallSteps).map(step=>[step.title,step.note]),Array.from({length:6},(_,i)=>getSketchNotes(study,i).map(note=>[note.title,note.before,note.after])),study==='forms'?'bank account country currency numeric keyboard':'habit subscription trial benefits')
- // How many studies each section (and each tag) would show with the current search.
- const counts=(t:string[])=>({reels:reelStudies.filter(r=>reelVisible(r,query,t)).length,studies:forms.filter(f=>formMatches(f,query,t)).length,heroes:heroStudies.filter(h=>heroMatches(h,query,t)).length})
- const now=counts(tags),total=now.reels+now.studies+now.heroes,all=reelStudies.length+forms.length+heroStudies.length
- const inSection=section==='all'?total:now[section]
- const tagOptions=allTags.map(t=>{const c=counts([t]);return {id:t,count:section==='all'?c.reels+c.studies+c.heroes:c[section]}})
+ // Items on the board: tips per reel, the two before → after studies and the hero layouts.
+ const reelCount=(r:ReelStudy,t:string[])=>r.tips.filter(tip=>tipVisible(r,tip,query,t)).length
+ const counts=(t:string[])=>({...Object.fromEntries(reelStudies.map(r=>[r.id,reelCount(r,t)])),studies:forms.filter(f=>formMatches(f,query,t)).length,heroes:heroStudies.filter(h=>heroMatches(h,query,t)).length}) as Record<string,number>
+ const inView=(c:Record<string,number>,sec:Section)=>sec==='all'?Object.values(c).reduce((a,b)=>a+b,0):sec==='reels'?reelStudies.reduce((n,r)=>n+c[r.id],0):c[sec]
+ // Totals ignore the search and tags; stamps show "shown / total" while a filter is on.
+ const totals:Record<string,number>={...Object.fromEntries(reelStudies.map(r=>[r.id,r.tips.length])),studies:forms.length,heroes:heroStudies.length}
+ const now=counts(tags),inSection=inView(now,section)
+ const tally=(id:Section)=>{const a=inView(now,id),b=inView(totals,id);return a===b?`${b}`:`${a} / ${b}`}
+ const tagOptions=allTags.map(t=>({id:t,count:inView(counts([t]),section)}))
  const ideas=!inSection?suggest(query,allTags).filter(t=>!tags.includes(t)):[]
- const show=(s:Section)=>section==='all'||section===s
+ const show=(s:'reels'|'studies'|'heroes')=>section==='all'||section===s||(s==='reels'&&reelStudies.some(r=>r.id===section))
+ const boardReels=reelStudies.filter(r=>section==='all'||section==='reels'||section===r.id)
+ const stamps:{id:Section,big:string,em:string,cls:string}[]=[...reelStudies.map(r=>({id:r.id,...r.cover,cls:`pb-stamp-${r.id}`})),{id:'studies',big:'Before',em:'→ after.',cls:'pb-stamp-studies'},{id:'heroes',big:'Hero',em:'layouts.',cls:'pb-stamp-heroes'}]
  const dialog=useRef<HTMLDialogElement>(null)
  const opener=useRef<HTMLButtonElement|null>(null)
  useEffect(()=>{if(!selected)return;const modal=dialog.current;if(!modal)return;const previous=document.body.style.overflow;document.body.style.overflow='hidden';modal.showModal();return()=>{document.body.style.overflow=previous;if(modal.open)modal.close();opener.current?.focus({preventScroll:true})}},[selected])
  function open(study:Study,event:React.MouseEvent<HTMLButtonElement>){opener.current=event.currentTarget;setSelected(study)}
  function close(){dialog.current?.close();setSelected(null)}
  function reset(){setQuery('');setTags([]);setSection('all')}
- return <div className="page ut-page"><div className="page-title"><div><span className="eyebrow">Library / UI Designs and Tips</span><h1>UI design notes.</h1><p>A square per study. Open it for the details.</p></div></div>
+ return <div className="page ut-page"><div className="page-title"><div><span className="eyebrow">Library / UI Designs and Tips</span><h1>UI design notes.</h1><p>Tap a note.</p></div></div>
   <div className="ut-search-row"><label className="ut-search"><Search size={17}/><input ref={search} type="search" aria-label="Search UI tips" placeholder="Search tips, e.g. pricing or hero" value={query} onChange={e=>setQuery(e.target.value)}/><SlashHint/></label>{query&&<button type="button" onClick={()=>setQuery('')}>Clear</button>}</div>
   <div className="ut-try">Try <TipTags tags={['forms','colour','hero','pricing']} active={tags} onSelect={toggleTag}/></div>
-  <div className="bui-kit ut-tabs"><Tabs selectedKey={section} onSelectionChange={k=>setSection(k as Section)}><TabList aria-label="Sections">{sections.map(s=><Tab key={s.id} id={s.id} count={s.id==='all'?total:now[s.id]}>{s.name}</Tab>)}</TabList></Tabs></div>
-  <div className="ut-filter-bar"><FacetFilter label="Tag" options={tagOptions} selected={tags} onChange={setTags}/><span role="status" className="ut-count">{inSection} of {section==='all'?all:{reels:reelStudies.length,studies:forms.length,heroes:heroStudies.length}[section]} studies</span></div>
+  <div className="pb-stamps" role="group" aria-label="Show">
+   <button className="pb-stamp pb-stamp-all" aria-pressed={section==='all'} onClick={()=>setSection('all')}><span>{tally('all')}</span><strong>All <em>notes.</em></strong></button>
+   {stamps.map(st=><button key={st.id} className={`pb-stamp ${st.cls}`} aria-pressed={section===st.id} onClick={()=>setSection(section===st.id?'all':st.id)}><span>{tally(st.id)}</span><strong>{st.big} <em>{st.em}</em></strong></button>)}
+  </div>
+  <div className="ut-filter-bar"><FacetFilter label="Tag" options={tagOptions} selected={tags} onChange={setTags}/><span role="status" className="ut-count">{inSection} of {inView(totals,section)}</span></div>
   <ActiveFilters items={tags.map(t=>({facet:'Tag',value:t}))} onRemove={(_,v)=>toggleTag(v)} onClear={()=>setTags([])}/>
-  {!inSection&&<div className="ut-no-results"><h2>No matches.</h2><p>{ideas.length?<>Try {ideas.map((t,i)=><span key={t}>{i?', ':''}<button className="ut-idea" onClick={()=>{setQuery('');setTags([t])}}>#{t}</button></span>)}.</>:'Try a tip name or a different tag.'}</p><button onClick={reset}>Show all studies</button></div>}
-  {show('reels')&&<ReelStudies query={query} tags={tags} onTag={toggleTag}/>}
-  {show('studies')&&<><div className="ut-study-grid">{forms.filter(f=>formMatches(f)).map(study=><article className={`ut-study-card ut-card-${study}`} key={study}><div className="ut-square"><div className="ut-card-badges"><span>{study==='forms'?'01':'02'} / UI study</span><span>Before → After</span></div><div className="ut-card-phones" aria-hidden="true" ref={node=>node?.setAttribute('inert','')}>{study==='forms'?<><div className="ut-card-before"><FormPreview stage={0} miniature/></div><div className="ut-card-after"><FormPreview miniature/></div></>:<><div className="ut-card-before"><PaywallPreview stage={0} miniature/></div><div className="ut-card-after"><PaywallPreview miniature/></div></>}</div><span className="ut-expand-icon"><ArrowUpRight size={20}/></span></div><TipTags tags={studyTags[study]} active={tags} onSelect={toggleTag}/><div className="ut-card-caption"><div><h2>{study==='forms'?'Better forms':'Better paywalls'}</h2><p>{study==='forms'?'Labels, spacing & focused input':'Five fixes for a habit-app paywall'}</p></div><ArrowUpRight size={20}/></div><button className="ut-card-open" onClick={e=>open(study,e)} aria-haspopup="dialog" aria-label={study==='forms'?'Open Better forms':'Open Better paywalls'}/></article>)}</div><p hidden={!forms.some(f=>formMatches(f))} className="reference-note">Form study · zanderwhitehurst. Paywall study · ux.amish.</p></>}
-  {show('heroes')&&<HeroStudies query={query} tags={tags} onTag={toggleTag}/>}
+  {!inSection&&<div className="ut-no-results"><h2>No matches.</h2><p>{ideas.length?<>Try {ideas.map((t,i)=><span key={t}>{i?', ':''}<button className="ut-idea" onClick={()=>{setQuery('');setTags([t])}}>#{t}</button></span>)}.</>:'Try another word or tag.'}</p><button onClick={reset}>Show everything</button></div>}
+  <div className="pb-board">
+   {show('reels')&&<ReelTiles query={query} tags={tags} reels={boardReels}/>}
+   {show('studies')&&forms.filter(f=>formMatches(f)).map(study=><article className="pb-tile pb-study" key={study}><div className="pb-paper" aria-hidden="true" ref={node=>node?.setAttribute('inert','')}><div className="pb-mini">{study==='forms'?<FormPreview miniature/>:<PaywallPreview miniature/>}</div></div><h3 className="pb-title">{study==='forms'?'Better forms':'Better paywalls'}</h3><button className="pb-open" onClick={e=>open(study,e)} aria-haspopup="dialog" aria-label={study==='forms'?'Open Better forms':'Open Better paywalls'}/></article>)}
+   {show('heroes')&&<HeroStudies query={query} tags={tags}/>}
+  </div>
+  {!!inSection&&<p className="reference-note pb-credits">Forms after <a href={references.forms} target="_blank" rel="noreferrer">zanderwhitehurst</a>. Paywall after <a href={references.paywall} target="_blank" rel="noreferrer">ux.amish</a>. Heroes after <a href={heroReference} target="_blank" rel="noreferrer">marcelodesignxh</a>.</p>}
   {selected&&<dialog className="ut-dialog" ref={dialog} aria-labelledby="ut-dialog-title" onCancel={e=>{e.preventDefault();close()}} onClose={()=>setSelected(null)} onClick={e=>{if(e.target===e.currentTarget)close()}}><div className="ut-dialog-inner"><header className="ut-dialog-header"><div><span className="eyebrow">UI Designs and Tips / {selected==='forms'?'01':'02'}</span><h2 id="ut-dialog-title">{selected==='forms'?'Better forms':'Better paywalls'}</h2></div><button autoFocus onClick={close} aria-label="Close study"><X size={21}/></button></header><StudyDetail study={selected}/></div></dialog>}
  </div>
 }
